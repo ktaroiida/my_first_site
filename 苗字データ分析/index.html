@@ -231,7 +231,8 @@
         function updateVisualization() {
             if (!statsData || !statsData[selectedCategory][selectedItem]) return;
 
-            const values = Object.values(statsData[selectedCategory][selectedItem]);
+            const rawValues = Object.values(statsData[selectedCategory][selectedItem]);
+            const values = rawValues.map(v => Number(v) || 0); // Ensure all values are numbers
             const min = Math.min(...values);
             const max = Math.max(...values);
 
@@ -239,7 +240,8 @@
             document.getElementById('scaleMin').innerText = min.toFixed(1) + '%';
 
             // 地図の色塗り
-            for (const [prefName, val] of Object.entries(statsData[selectedCategory][selectedItem])) {
+            for (const [prefName, rawVal] of Object.entries(statsData[selectedCategory][selectedItem])) {
+                const val = Number(rawVal) || 0;
                 const path = document.getElementById(`pref-${prefName}`);
                 if (path) {
                     const ratio = (max === min) ? 0.5 : (val - min) / (max - min);
@@ -249,6 +251,7 @@
 
             // ランキング更新
             const ranking = Object.entries(statsData[selectedCategory][selectedItem])
+                .map(([k, v]) => [k, Number(v) || 0])
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 10);
 
@@ -274,7 +277,10 @@
 
         function showTooltip(e, prefName) {
             const tooltip = document.getElementById('tooltip');
-            const val = statsData[selectedCategory][selectedItem][prefName] || 0;
+            const dataObj = statsData[selectedCategory][selectedItem];
+            const rawVal = dataObj ? dataObj[prefName] : 0;
+            const val = Number(rawVal) || 0;
+
             tooltip.style.display = 'block';
             tooltip.style.left = (e.pageX + 10) + 'px';
             tooltip.style.top = (e.pageY + 10) + 'px';
