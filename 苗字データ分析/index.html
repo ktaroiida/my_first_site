@@ -172,14 +172,18 @@
         // 初期化
         async function init() {
             try {
-                const response = await fetch('map_stats.json');
+                const response = await fetch('./map_stats.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 statsData = await response.json();
+                console.log("Loaded data:", statsData); // Debug log
                 createMap();
                 updateSubcategories();
                 updateVisualization();
             } catch (err) {
                 console.error("Data load failed:", err);
-                alert("データの読み込みに失敗しました。map_stats.json が存在するか確認してください。");
+                alert(`データの読み込みに失敗しました。\nエラー詳細: ${err.message}\n(map_stats.json が同じフォルダにあるか確認してください)`);
             }
         }
 
