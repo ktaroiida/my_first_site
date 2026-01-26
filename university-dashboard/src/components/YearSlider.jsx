@@ -1,16 +1,27 @@
-import React from 'react';
+import { motion } from 'framer-motion';
 import { Calendar } from 'lucide-react';
 
 const YearSlider = ({ year, years, onChange }) => {
     return (
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-[32px] border border-white/40 shadow-2xl flex items-center gap-8 ring-1 ring-black/[0.05]">
-            <div className="flex items-center gap-3">
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white/80 backdrop-blur-xl p-6 rounded-[32px] border border-white/40 shadow-2xl flex items-center gap-8 ring-1 ring-black/[0.05]"
+        >
+            <div className="flex items-center gap-3 shrink-0">
                 <div className="w-10 h-10 bg-slate-900/5 rounded-full flex items-center justify-center text-slate-900">
                     <Calendar size={20} />
                 </div>
                 <div>
                     <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Selected Year</div>
-                    <div className="text-xl font-black text-slate-900 leading-none mt-0.5">{year}<span className="text-xs ml-1 font-bold">年度</span></div>
+                    <motion.div
+                        key={year}
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="text-xl font-black text-slate-900 leading-none mt-0.5"
+                    >
+                        {year}<span className="text-xs ml-1 font-bold">年度</span>
+                    </motion.div>
                 </div>
             </div>
             <div className="flex-1 px-4 relative flex items-center h-12">
@@ -24,13 +35,15 @@ const YearSlider = ({ year, years, onChange }) => {
                     onChange={(e) => onChange(parseInt(e.target.value))}
                     className="w-full appearance-none bg-transparent relative z-10 cursor-pointer accent-slate-900"
                 />
-                <div className="absolute top-8 left-4 right-4 flex justify-between">
+                <div className="absolute top-8 left-4 right-4 flex justify-between px-0.5">
                     {years.map((y) => (
-                        <span key={y} className={`text-[9px] font-bold transition-all ${y === year ? 'text-slate-900' : 'text-slate-300'}`}>'{(y % 100)}</span>
+                        <span key={y} className={`text-[9px] font-bold transition-all duration-300 ${y === year ? 'text-slate-900 scale-125' : 'text-slate-300'}`}>
+                            '{(y % 100)}
+                        </span>
                     ))}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

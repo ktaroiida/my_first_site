@@ -76,6 +76,16 @@ class DataService {
         const rank = sorted.findIndex(d => this.normalizePref(d.Prefecture) === normalizedInput) + 1;
         return rank > 0 ? rank : "-";
     }
+
+    getGenderGapRank(year, prefName) {
+        const yearlyData = this.getYearlyData(year);
+        const normalizedInput = this.normalizePref(prefName);
+        // Rank by absolute gap (smaller gap is better? Or just smallest gap is rank 1)
+        // Usually people want "smallest gap" to be rank 1.
+        const sorted = [...yearlyData].sort((a, b) => Math.abs(a.Male_Rate - a.Female_Rate) - Math.abs(b.Male_Rate - b.Female_Rate));
+        const rank = sorted.findIndex(d => this.normalizePref(d.Prefecture) === normalizedInput) + 1;
+        return rank > 0 ? rank : "-";
+    }
 }
 
 export const dataService = new DataService();
