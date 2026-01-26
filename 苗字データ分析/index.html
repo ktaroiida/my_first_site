@@ -5,10 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>苗字音韻分布マップ - 日本地図可視化</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap"
-        rel="stylesheet">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body {
             font-family: 'Inter', 'Noto Sans JP', sans-serif;
@@ -19,33 +17,31 @@
             position: relative;
             width: 100%;
             height: 600px;
-            background: white;
+            background: #cbd5e1;
+            /* Set background to map sea color or neutral */
             border-radius: 1rem;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            overflow: hidden;
         }
 
-        svg path {
-            transition: all 0.3s ease;
-            stroke: #fff;
-            stroke-width: 0.5px;
-            cursor: pointer;
+        /* Leaflet override to match design */
+        .leaflet-container {
+            background: #f8fafc;
+            font-family: inherit;
         }
 
-        svg path:hover {
-            filter: brightness(0.9);
-            stroke-width: 1.5px;
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
         }
 
-        .tooltip {
-            position: absolute;
-            pointer-events: none;
-            background: rgba(15, 23, 42, 0.9);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            display: none;
-            z-index: 50;
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
         }
 
         .gradient-bar {
@@ -91,15 +87,12 @@
 
             <!-- 地図表示エリア -->
             <div class="lg:col-span-3">
-                <div class="map-container flex items-center justify-center overflow-hidden">
-                    <div id="tooltip" class="tooltip"></div>
-                    <div id="svgWrapper" class="w-full h-full p-4 flex items-center justify-center">
-                        <!-- SVG map added by JS -->
-                        <p class="text-slate-400">地図を読み込み中...</p>
-                    </div>
-                    <!-- 凡例 -->
+                <div class="map-container">
+                    <div id="map" class="w-full h-full"></div>
+
+                    <!-- 凡例 (Leafletの上に重ねる) -->
                     <div
-                        class="absolute bottom-6 right-6 bg-white/80 backdrop-blur p-4 rounded-xl border border-slate-100 shadow-sm">
+                        class="absolute bottom-6 right-6 z-[1000] bg-white/90 backdrop-blur p-4 rounded-xl border border-slate-100 shadow-sm leaflet-control">
                         <div class="text-xs font-bold text-slate-500 mb-2">分布密度（シェア %）</div>
                         <div class="gradient-bar w-32 mb-1"></div>
                         <div class="flex justify-between text-[10px] text-slate-400">
@@ -113,107 +106,63 @@
     </div>
 
     <script>
+        let map;
+        let geojsonLayer;
         let statsData = null;
+        let geoJsonData = null;
         let selectedCategory = 'gyo';
         let selectedItem = 'あ行';
-        const colorScale = ['#eff6ff', '#dbeafe', '#bfdbfe', '#93c5fd', '#f97316', '#ea580c'];
 
-        // 日本地図 SVG Path データ（軽量化した簡易版）
-        const JapanMap = {
-            "北海道": "M440,30 L450,40 L460,50 L470,80 L440,110 L410,120 L380,100 L370,60 Z",
-            "青森県": "M400,160 L415,160 L415,185 L390,185 Z",
-            "岩手県": "M405,185 L425,185 L425,225 L405,225 Z",
-            "宮城県": "M405,225 L425,225 L425,255 L405,255 Z",
-            "秋田県": "M385,185 L405,185 L405,225 L385,225 Z",
-            "山形県": "M385,225 L405,225 L405,255 L385,255 Z",
-            "福島県": "M385,255 L425,255 L425,290 L385,290 Z",
-            "茨城県": "M395,290 L415,290 L415,325 L395,325 Z",
-            "栃木県": "M375,290 L395,290 L395,325 L375,325 Z",
-            "群馬県": "M355,290 L375,290 L375,325 L355,325 Z",
-            "埼玉県": "M355,325 L395,325 L395,345 L355,345 Z",
-            "千葉県": "M395,325 L420,325 L420,380 L395,380 Z",
-            "東京都": "M355,345 L395,345 L395,365 L355,365 Z",
-            "神奈川県": "M355,365 L395,365 L395,385 L355,385 Z",
-            "新潟県": "M350,230 L385,250 L385,290 L340,290 L330,260 Z",
-            "富山県": "M320,270 L340,270 L340,300 L320,300 Z",
-            "石川県": "M310,240 L330,240 L320,270 L300,270 Z",
-            "福井県": "M290,290 L320,290 L320,320 L290,320 Z",
-            "山梨県": "M335,325 L355,325 L355,355 L335,355 Z",
-            "長野県": "M335,290 L355,290 L355,355 L330,355 L330,320 Z",
-            "岐阜県": "M310,320 L335,320 L335,365 L310,365 Z",
-            "静岡県": "M335,355 L380,355 L380,390 L335,390 Z",
-            "愛知県": "M310,365 L335,365 L335,395 L310,395 Z",
-            "三重県": "M290,365 L310,365 L310,410 L290,410 Z",
-            "滋賀県": "M285,320 L310,320 L310,350 L285,350 Z",
-            "京都府": "M265,320 L285,320 L285,360 L245,360 L245,340 Z",
-            "大阪府": "M265,360 L285,360 L285,395 L265,395 Z",
-            "兵庫県": "M240,310 L265,310 L265,365 L220,365 L220,340 Z",
-            "奈良県": "M265,395 L285,395 L285,430 L265,430 Z",
-            "和歌山県": "M250,420 L285,420 L285,450 L250,450 Z",
-            "鳥取県": "M210,320 L240,320 L240,340 L210,340 Z",
-            "島根県": "M170,320 L210,320 L210,345 L170,345 Z",
-            "岡山県": "M210,340 L240,340 L240,365 L210,365 Z",
-            "広島県": "M170,345 L210,345 L210,375 L170,375 Z",
-            "山口県": "M140,340 L170,340 L170,385 L140,385 Z",
-            "徳島県": "M195,400 L235,400 L235,425 L195,425 Z",
-            "香川県": "M195,385 L235,385 L235,400 L195,400 Z",
-            "愛媛県": "M155,395 L195,395 L195,430 L155,430 Z",
-            "高知県": "M155,430 L220,430 L220,460 L155,460 Z",
-            "福岡県": "M110,370 L140,370 L140,405 L110,405 Z",
-            "佐賀県": "M85,385 L110,385 L110,415 L85,415 Z",
-            "長崎県": "M60,385 L85,385 L85,445 L60,445 Z",
-            "熊本県": "M95,415 L125,415 L125,460 L95,460 Z",
-            "大分県": "M125,405 L155,405 L155,445 L125,445 Z",
-            "宮崎県": "M125,445 L150,445 L150,490 L125,490 Z",
-            "鹿児島県": "M90,460 L125,460 L125,500 L90,500 Z",
-            "沖縄県": "M20,520 L60,520 L60,550 L20,550 Z"
-        };
-
-        // 初期化
-        async function init() {
-            try {
-                const response = await fetch('./map_stats.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                statsData = await response.json();
-                console.log("Loaded data:", statsData); // Debug log
-                createMap();
-                updateSubcategories();
-                updateVisualization();
-            } catch (err) {
-                console.error("Data load failed:", err);
-                alert(`データの読み込みに失敗しました。\nエラー詳細: ${err.message}\n(map_stats.json が同じフォルダにあるか確認してください)`);
-            }
+        // 色の計算
+        function lerpColor(a, b, amount) {
+            const ah = parseInt(a.replace(/#/g, ''), 16),
+                ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+                bh = parseInt(b.replace(/#/g, ''), 16),
+                br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+                rr = ar + amount * (br - ar),
+                rg = ag + amount * (bg - ag),
+                rb = ab + amount * (bb - ab);
+            return '#' + ((1 << 24) + (Math.round(rr) << 16) + (Math.round(rg) << 8) + Math.round(rb)).toString(16).slice(1);
         }
 
-        function createMap() {
-            const svgNamespace = "http://www.w3.org/2000/svg";
-            const svg = document.createElementNS(svgNamespace, "svg");
-            svg.setAttribute("viewBox", "0 0 500 560");
-            svg.setAttribute("class", "w-full h-full");
+        async function init() {
+            try {
+                // Leaflet Map Init
+                map = L.map('map', { zoomControl: false }).setView([37.8, 137], 5);
 
-            for (const [name, pathData] of Object.entries(JapanMap)) {
-                const path = document.createElementNS(svgNamespace, "path");
-                path.setAttribute("d", pathData);
-                path.setAttribute("id", `pref-${name}`);
-                path.setAttribute("fill", "#e2e8f0");
+                // Add a minimal tile layer
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+                    attribution: '©OpenStreetMap, ©CartoDB',
+                    subdomains: 'abcd',
+                    maxZoom: 10
+                }).addTo(map);
 
-                path.addEventListener('mousemove', (e) => showTooltip(e, name));
-                path.addEventListener('mouseleave', hideTooltip);
+                // Fetch Data
+                const [statsRes, geoRes] = await Promise.all([
+                    fetch('./map_stats.json'),
+                    fetch('https://raw.githubusercontent.com/dataofjapan/land/master/japan.geojson')
+                ]);
 
-                svg.appendChild(path);
+                if (!statsRes.ok) throw new Error('Failed to load map_stats.json');
+                if (!geoRes.ok) throw new Error('Failed to load GeoJSON');
+
+                statsData = await statsRes.json();
+                geoJsonData = await geoRes.json();
+
+                updateSubcategories();
+                updateVisualization();
+
+            } catch (err) {
+                console.error(err);
+                alert('マップの読み込みに失敗しました: ' + err.message);
             }
-            document.getElementById('svgWrapper').innerHTML = '';
-            document.getElementById('svgWrapper').appendChild(svg);
         }
 
         function updateSubcategories() {
             const container = document.getElementById('subCategoryContainer');
             container.innerHTML = '';
 
-            const items = Object.keys(statsData[selectedCategory]);
-            items.sort();
+            const items = Object.keys(statsData[selectedCategory]).sort();
 
             items.forEach(item => {
                 const btn = document.createElement('button');
@@ -221,7 +170,7 @@
                 btn.innerText = item;
                 btn.onclick = () => {
                     selectedItem = item;
-                    updateSubcategories();
+                    updateSubcategories(); // Update active state
                     updateVisualization();
                 };
                 container.appendChild(btn);
@@ -229,28 +178,81 @@
         }
 
         function updateVisualization() {
-            if (!statsData || !statsData[selectedCategory][selectedItem]) return;
+            if (!statsData || !geoJsonData) return;
 
-            const rawValues = Object.values(statsData[selectedCategory][selectedItem]);
-            const values = rawValues.map(v => Number(v) || 0); // Ensure all values are numbers
-            const min = Math.min(...values);
-            const max = Math.max(...values);
+            // Calculate Min/Max for current selection
+            const valObj = statsData[selectedCategory][selectedItem];
+            const rawValues = Object.values(valObj);
+            const values = rawValues.map(v => Number(v) || 0);
 
-            document.getElementById('scaleMax').innerText = max.toFixed(1) + '%';
+            const min = values.length ? Math.min(...values) : 0;
+            const max = values.length ? Math.max(...values) : 0;
+
             document.getElementById('scaleMin').innerText = min.toFixed(1) + '%';
+            document.getElementById('scaleMax').innerText = max.toFixed(1) + '%';
 
-            // 地図の色塗り
-            for (const [prefName, rawVal] of Object.entries(statsData[selectedCategory][selectedItem])) {
-                const val = Number(rawVal) || 0;
-                const path = document.getElementById(`pref-${prefName}`);
-                if (path) {
-                    const ratio = (max === min) ? 0.5 : (val - min) / (max - min);
-                    path.setAttribute("fill", lerpColor('#f3f4f6', '#f97316', ratio));
+            // Define Style Function
+            function style(feature) {
+                const prefName = feature.properties.nam_ja; // Adjust based on GeoJSON property key
+                const val = Number(valObj[prefName]) || 0;
+
+                // Color ramp
+                let fillColor = '#eff6ff';
+                if (max > min) {
+                    const ratio = (val - min) / (max - min);
+                    fillColor = lerpColor('#f3f4f6', '#f97316', ratio);
+                } else if (val > 0) {
+                    fillColor = '#f97316'; // If all same and > 0
                 }
+
+                return {
+                    fillColor: fillColor,
+                    weight: 1,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: 0.8
+                };
             }
 
-            // ランキング更新
-            const ranking = Object.entries(statsData[selectedCategory][selectedItem])
+            // Remove existing layer if any
+            if (geojsonLayer) {
+                map.removeLayer(geojsonLayer);
+            }
+
+            // Add GeoJSON Layer
+            geojsonLayer = L.geoJson(geoJsonData, {
+                style: style,
+                onEachFeature: function (feature, layer) {
+                    const prefName = feature.properties.nam_ja;
+                    const val = Number(valObj[prefName]) || 0;
+
+                    layer.bindTooltip(`<strong>${prefName}</strong><br>${selectedItem}: ${val.toFixed(2)}%`, {
+                        sticky: true,
+                        direction: 'top',
+                        className: 'bg-slate-800 text-white p-2 rounded text-xs border-none shadow-xl'
+                    });
+
+                    layer.on({
+                        mouseover: (e) => {
+                            const l = e.target;
+                            l.setStyle({
+                                weight: 3,
+                                color: '#666',
+                                dashArray: '',
+                                fillOpacity: 1
+                            });
+                            l.bringToFront();
+                        },
+                        mouseout: (e) => {
+                            geojsonLayer.resetStyle(e.target);
+                        }
+                    });
+                }
+            }).addTo(map);
+
+            // Update Ranking
+            const ranking = Object.entries(valObj)
                 .map(([k, v]) => [k, Number(v) || 0])
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 10);
@@ -264,36 +266,13 @@
             `).join('');
         }
 
-        function lerpColor(a, b, amount) {
-            const ah = parseInt(a.replace(/#/g, ''), 16),
-                ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
-                bh = parseInt(b.replace(/#/g, ''), 16),
-                br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
-                rr = ar + amount * (br - ar),
-                rg = ag + amount * (bg - ag),
-                rb = ab + amount * (bb - ab);
-            return '#' + ((1 << 24) + (Math.round(rr) << 16) + (Math.round(rg) << 8) + Math.round(rb)).toString(16).slice(1);
-        }
-
-        function showTooltip(e, prefName) {
-            const tooltip = document.getElementById('tooltip');
-            const dataObj = statsData[selectedCategory][selectedItem];
-            const rawVal = dataObj ? dataObj[prefName] : 0;
-            const val = Number(rawVal) || 0;
-
-            tooltip.style.display = 'block';
-            tooltip.style.left = (e.pageX + 10) + 'px';
-            tooltip.style.top = (e.pageY + 10) + 'px';
-            tooltip.innerHTML = `<strong>${prefName}</strong><br>${selectedItem}: ${val.toFixed(2)}%`;
-        }
-
-        function hideTooltip() {
-            document.getElementById('tooltip').style.display = 'none';
-        }
-
         document.getElementById('modeSelect').addEventListener('change', (e) => {
             selectedCategory = e.target.value;
-            selectedItem = Object.keys(statsData[selectedCategory])[0];
+            // Select first item of new category
+            const newItems = Object.keys(statsData[selectedCategory]).sort();
+            if (newItems.length > 0) {
+                selectedItem = newItems[0];
+            }
             updateSubcategories();
             updateVisualization();
         });
