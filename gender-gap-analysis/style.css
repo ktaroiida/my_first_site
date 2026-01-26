@@ -1,0 +1,243 @@
+:root {
+    --note-green: #2cb696;
+    --note-text: #222222;
+    --note-muted: #666666;
+    --note-bg: #ffffff;
+    --note-border: #e5e5e5;
+    --note-font: 'Noto Sans JP', sans-serif;
+    --note-inter: 'Inter', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--note-bg);
+    color: var(--note-text);
+    font-family: var(--note-font);
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+.note-header {
+    height: 64px;
+    border-bottom: 1px solid var(--note-border);
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 1000;
+}
+
+.header-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: var(--note-inter);
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-search {
+    background: none;
+    border: none;
+    color: var(--note-muted);
+    cursor: pointer;
+    padding: 8px;
+}
+
+.btn-login {
+    background: none;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-signup {
+    background: var(--note-green);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Article */
+.note-article {
+    padding-bottom: 80px;
+}
+
+.article-hero {
+    max-width: 100%;
+    background: #f8f8f8;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-img {
+    max-width: 1040px;
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+}
+
+.article-container {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.article-title {
+    font-size: 32px;
+    line-height: 1.4;
+    margin-bottom: 24px;
+    font-weight: bold;
+}
+
+.article-meta {
+    margin-bottom: 40px;
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.author-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.publish-date {
+    font-size: 12px;
+    color: var(--note-muted);
+}
+
+.article-body h2 {
+    font-size: 24px;
+    margin: 48px 0 24px;
+    border-left: 4px solid var(--note-green);
+    padding-left: 16px;
+}
+
+.article-body p {
+    margin-bottom: 24px;
+    font-size: 16px;
+}
+
+.article-body ul {
+    margin-bottom: 24px;
+    padding-left: 20px;
+}
+
+.article-body li {
+    margin-bottom: 8px;
+}
+
+.article-body strong {
+    color: var(--note-green);
+}
+
+.article-figure {
+    margin: 40px -40px;
+    text-align: center;
+}
+
+.article-figure img {
+    max-width: 100%;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.article-figure figcaption {
+    font-size: 14px;
+    color: var(--note-muted);
+    margin-top: 12px;
+}
+
+.note-tags {
+    margin-top: 60px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.note-tags span {
+    background: #f2f2f2;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--note-muted);
+}
+
+.note-footer {
+    margin-top: 40px;
+    padding-top: 40px;
+    border-top: 1px solid var(--note-border);
+}
+
+.reaction-buttons {
+    display: flex;
+    gap: 16px;
+}
+
+.btn-like,
+.btn-share {
+    background: none;
+    border: 1px solid var(--note-border);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--note-muted);
+}
+
+.btn-like:hover {
+    background: #fff0f0;
+    border-color: #ffbaba;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--note-border);
+    margin: 60px 0;
+}
+
+@media (max-width: 700px) {
+    .article-figure {
+        margin: 32px 0;
+    }
+
+    .article-title {
+        font-size: 24px;
+    }
+}

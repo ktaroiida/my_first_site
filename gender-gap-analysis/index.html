@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【完全版データ分析】11年間で見る、日本の大学進学率「男女格差」の真実｜Premium Data Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="note-header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="40" height="40" rx="8" fill="#2CB696" />
+                    <path d="M12 12H28V15H12V12Z" fill="white" />
+                    <path d="M12 18H28V21H12V18Z" fill="white" />
+                    <path d="M12 24H22V27H12V24Z" fill="white" />
+                </svg>
+                <span>note</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn-search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.3-4.3" />
+                    </svg></button>
+                <button class="btn-login">ログイン</button>
+                <button class="btn-signup">会員登録</button>
+            </div>
+        </div>
+    </header>
+
+    <article class="note-article">
+        <div class="article-hero">
+            <img src="long_term_gap_transition.png" alt="メインビジュアル" class="hero-img">
+        </div>
+
+        <div class="article-container">
+            <header class="article-header">
+                <h1 class="article-title">【完全版データ分析】11年間で見る、日本の大学進学率「男女格差」の真実</h1>
+                <div class="article-meta">
+                    <div class="author-info">
+                        <div class="author-avatar"
+                            style="background-color: #eee; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #999;">
+                            P</div>
+                        <div class="author-details">
+                            <span class="author-name">Premium Data Lab</span>
+                            <span class="publish-date">2026年1月26日 09:29</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="article-body">
+                <p>文部科学省が公表する「学校基本調査」の過去11年分（2015〜2025年度）のデータを徹底分析し、日本の大学進学における「男女格差」の実態と、その劇的な変化を可視化しました。</p>
+                <p>一見すると「進学の機会は平等」に見える日本ですが、データを紐解くと、非常にドラマチックな構造変化が起きていることがわかります。単なる「進学率の推移」だけでなく、地域ごとの特性、短期大学を含めた高等教育全体の傾向、さらには社会構造との関連まで、多角的に分析を進めました。
+                </p>
+
+                <h2>1. 2025年度の現在地：「男女平等線」から見える進学志向のズレ</h2>
+                <p>まずは、2025年度の最新データから見てみましょう。大学（学部）への進学率を男女別にプロットした散布図です。</p>
+
+                <figure class="article-figure">
+                    <img src="2025教育基本調査/university_scatter_2025.png" alt="2025年度 大学進学率 散布図">
+                    <figcaption>図1：2025年度 都道府県別 大学（学部）進学率の比較</figcaption>
+                </figure>
+
+                <p>中央の点線は「男女平等線（45度線）」です。この線の上にあれば女子の方が進学率が高く、下にあれば男子の方が高いことを示しています。</p>
+
+                <p>2025年度のデータでは、<strong>東京都（女子 約77% / 男子 約72.6%）</strong>が最も高い水準にあり、<strong>京都府（女子 約75% / 男子
+                        約74%）</strong>、<strong>神奈川県（女子 約71% / 男子
+                        約68%）</strong>と続きます。都市部は概ね高い進学率を示し、かつ男女の差も比較的小さい傾向にあります。</p>
+
+                <p>一方、地方県に目を向けると、状況は多様です。例えば<strong>福井県</strong>では男子の進学率が約61.6%に対し女子は約54.4%と、7ポイント以上の差があります。対照的に、<strong>熊本県</strong>では女子が約50.3%、男子が約45.9%と、女子が4ポイント以上リードしています。
+                </p>
+
+                <h3>都市部と地方の二極化</h3>
+                <p>この散布図から読み取れる重要な点は、「都市部ほど進学率が高く、男女差も小さい」という傾向です。これは、都市部では：</p>
+                <ul>
+                    <li>大学の選択肢が豊富で、自宅通学も可能</li>
+                    <li>性別に関わらず高等教育を受けることが「当たり前」という文化</li>
+                    <li>就職市場が多様で、学歴重視の傾向が強い</li>
+                </ul>
+                <p>といった複合的な要因が働いていると考えられます。</p>
+
+                <h2>2. 11年間の「軌跡」が物語る是正の歴史</h2>
+                <p>次に、この格差が過去11年間でどのように変化してきたかを見てみましょう。このグラフは、本分析の核心とも言える可視化です。</p>
+
+                <figure class="article-figure">
+                    <img src="2025教育基本調査/long_term_gap_transition.png" alt="11年間の軌跡">
+                    <figcaption>図2：都道府県別・進学率格差の11年間の変遷（2015→2025）</figcaption>
+                </figure>
+
+                <p>このグラフでは、各都道府県について2015年（青い点）から2025年（黄色いダイヤモンド）への変化を示しています。背景の色は、その県の11年間の「歴史的な傾向」を表しており、<strong>紺色が濃いほど男子優位、バーガンディ（赤紫）が濃いほど女子優位</strong>な体質を持っています。
+                </p>
+
+                <h3>「是正」の軌跡が見える県</h3>
+                <p>注目すべきは、多くの県で黄色いダイヤモンド（最新値）が中央の「0%ライン（男女平等）」に向かって移動していることです。特に顕著なのは：</p>
+                <ul>
+                    <li><strong>北海道</strong>：2015年は約-9.7ポイントの男子優位でしたが、2025年には約-6.5ポイントまで縮小</li>
+                    <li><strong>群馬県</strong>：2015年の約-5.3ポイントから2025年には約-3.2ポイントへ</li>
+                    <li><strong>岩手県</strong>：2015年の約-4.3ポイントから2025年には約-1.5ポイントへと大幅改善</li>
+                </ul>
+
+                <h3>「逆転」した県も</h3>
+                <p>さらに興味深いのは、この11年間で男子優位から女子優位へと「逆転」した県が複数存在することです：</p>
+                <ul>
+                    <li><strong>東京都</strong>：2015年は約-0.8ポイントの男子優位でしたが、2025年には+2.8ポイントの女子優位に</li>
+                    <li><strong>沖縄県</strong>：2015年の約-1.6ポイントから2025年には+2.5ポイントへと逆転</li>
+                </ul>
+                <p>これは、<strong>日本全体として格差が是正されている</strong>だけでなく、一部の地域では女子の進学意欲が男子を上回る構造的変化が起きていることを示しています。</p>
+
+                <h2>3. 箱ひげ図で見る「格差の分布」と統計的特徴</h2>
+                <p>11年間のデータを統計的に集約した箱ひげ図を見てみましょう。この図は、各県の「歴史的な傾向」と「最新の状況」を同時に把握できる優れた可視化です。</p>
+
+                <figure class="article-figure">
+                    <img src="2025教育基本調査/boxplot_gap_11years_sorted.png" alt="箱ひげ図">
+                    <figcaption>図3：11年間の進学率格差の分布（中央値順にソート）</figcaption>
+                </figure>
+
+                <h3>箱ひげ図の読み方</h3>
+                <p>この図では、各県の11年間のデータを箱で表現しています：</p>
+                <ul>
+                    <li><strong>箱の中央の線</strong>：11年間の中央値（真ん中の値）</li>
+                    <li><strong>箱の上下</strong>：データの25%点と75%点（中央の50%のデータ範囲）</li>
+                    <li><strong>ヒゲ</strong>：データの最小値と最大値（外れ値を除く）</li>
+                    <li><strong>黄色いダイヤモンド（◆）</strong>：2025年度の最新値</li>
+                </ul>
+
+                <h3>色が示す歴史的傾向</h3>
+                <p>箱の色は「11年間の中央値が0%からどれだけ離れているか」を示しており：</p>
+                <ul>
+                    <li><strong>紺色</strong>：歴史的に男子の進学率が高い県（福井、北海道、山梨など）</li>
+                    <li><strong>バーガンディ</strong>：歴史的に女子の進学率が高い県（熊本、東京、沖縄など）</li>
+                    <li><strong>白に近い色</strong>：男女がほぼ平等な県（山口、鳥取など）</li>
+                </ul>
+
+                <h3>「縮小傾向」の可視化</h3>
+                <p>多くの県で、箱の中央（歴史的な中央値）よりも0%ラインに近い位置に黄色い点（2025年度）があることがわかります。これは<strong>「近年、急速に格差が縮小している」</strong>ことを意味します。
+                </p>
+
+                <p>例えば、<strong>福井県</strong>は歴史的に最も男子優位な県の一つですが、箱の範囲は-10%〜-6%程度に分布しており、2025年の値は-7.1%と、この範囲の中では比較的0%に近い位置にあります。つまり、福井県でも格差は徐々に縮小しているのです。
+                </p>
+
+                <h2>4. 年度ごとの詳細分析：11年間の変化を数字で追う</h2>
+                <p>全国の進学率格差（中央値）の推移を、年度ごとに詳しく見てみましょう。</p>
+
+                <table style="width: 100%; border-collapse: collapse; margin: 2rem 0;">
+                    <thead>
+                        <tr style="background: #f8f8f8;">
+                            <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">年度</th>
+                            <th style="padding: 0.75rem; text-align: right; border-bottom: 2px solid #ddd;">格差（中央値）</th>
+                            <th style="padding: 0.75rem; text-align: right; border-bottom: 2px solid #ddd;">前年比</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">2015年度</td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;"><strong>-4.36
+                                    pt</strong></td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;">—</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">2016年度</td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;">-4.06 pt</td>
+                            <td
+                                style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee; color: #2cb696;">
+                                +0.30 pt</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">2017年度</td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;">-3.74 pt</td>
+                            <td
+                                style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee; color: #2cb696;">
+                                +0.32 pt</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">2018年度</td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;">-2.73 pt</td>
+                            <td
+                                style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee; color: #2cb696;">
+                                +1.01 pt</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">2019年度</td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;">-2.14 pt</td>
+                            <td
+                                style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee; color: #2cb696;">
+                                +0.59 pt</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">2020年度</td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;">-2.76 pt</td>
+                            <td
+                                style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee; color: #c9302c;">
+                                -0.62 pt</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">2021年度</td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;">-2.81 pt</td>
+                            <td
+                                style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee; color: #c9302c;">
+                                -0.05 pt</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">2022年度</td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;">-2.83 pt</td>
+                            <td
+                                style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee; color: #c9302c;">
+                                -0.02 pt</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">2023年度</td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;">-2.94 pt</td>
+                            <td
+                                style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee; color: #c9302c;">
+                                -0.11 pt</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;">2024年度</td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;">-3.06 pt</td>
+                            <td
+                                style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee; color: #c9302c;">
+                                -0.12 pt</td>
+                        </tr>
+                        <tr style="background: #f0f8f5;">
+                            <td style="padding: 0.5rem; border-bottom: 1px solid #eee;"><strong>2025年度</strong></td>
+                            <td style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee;"><strong
+                                    style="color: #2cb696;">-1.80 pt</strong></td>
+                            <td
+                                style="padding: 0.5rem; text-align: right; border-bottom: 1px solid #eee; color: #2cb696;">
+                                <strong>+1.26 pt</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>注目すべき転換点</h3>
+                <p>この表から、いくつかの重要な転換点が浮かび上がります：</p>
+                <ul>
+                    <li><strong>2015-2019年</strong>：順調に格差が縮小（-4.36pt → -2.14pt、計2.22pt改善）</li>
+                    <li><strong>2020-2024年</strong>：コロナ禍の影響か、改善が停滞（-2.76pt → -3.06pt、むしろ悪化）</li>
+                    <li><strong>2025年</strong>：劇的な改善（-3.06pt → -1.80pt、1年で1.26pt改善）</li>
+                </ul>
+
+                <p>特に2025年度の改善幅は過去11年間で最大であり、これは何らかの構造的な変化が起きている可能性を示唆しています。考えられる要因としては：</p>
+                <ul>
+                    <li>コロナ禍からの完全な回復と、女子の進学率の急回復</li>
+                    <li>地方における女子の進学環境改善（地元大学の定員増など）</li>
+                    <li>社会全体での男女平等意識の浸透</li>
+                </ul>
+
+                <h2>5. 短期大学を含めると現れる「完全逆転」</h2>
+                <p>これまでは「大学（学部）のみ」のデータを見てきましたが、ここに<strong>短期大学</strong>の進学率を加えると、風景は劇的に変わります。</p>
+
+                <figure class="article-figure">
+                    <img src="2025教育基本調査/advancement_including_jc_scatter_2025.png" alt="短大を含めた進学率">
+                    <figcaption>図4：大学・短大進学率の比較（2025年度）</figcaption>
+                </figure>
+
+                <h3>なぜ短大を含めると逆転するのか</h3>
+                <p>短大を含めた場合、<strong>全国47都道府県のほぼ全てで女子の進学率が男子を上回る</strong>ことになります。これは、日本の短期大学が歴史的に「女子の高等教育機関」として機能してきた背景があります。
+                </p>
+
+                <p>2025年度のデータを詳しく見ると：</p>
+                <ul>
+                    <li><strong>大学のみ</strong>：男子優位の県が多数（47都道府県中、約30県）</li>
+                    <li><strong>大学+短大</strong>：女子優位の県が圧倒的多数（47都道府県中、約45県）</li>
+                </ul>
+
+                <p>平均差は約2.94ポイント（女子優位）となっており、これは2024年度（約2.96ポイント）から引き続き、<strong>「高等教育全体への進学意欲」では女子が明確にリードしている</strong>現状を裏付けています。
+                </p>
+
+                <h3>短大進学率自体は減少傾向</h3>
+                <p>ただし注意すべきは、短大への進学率自体は全国的に減少傾向にあることです。多くの短大が四年制大学への改組を進めており、今後は「大学のみ」でのデータがより重要になってくると考えられます。</p>
+
+                <h2>6. 地域特性から見る格差の背景</h2>
+                <p>都道府県ごとの特性を詳しく見ていくと、格差の背景にある社会構造が見えてきます。</p>
+
+                <h3>男子優位が続く県の特徴</h3>
+                <p>2025年度でも男子優位が比較的大きい県（格差-5pt以上）には、共通する特徴があります：</p>
+                <ul>
+                    <li><strong>製造業の就職先が豊富</strong>：福井県、山梨県、滋賀県など</li>
+                    <li><strong>地元就職率が高い</strong>：男子は高校卒業後に地元の工場等に就職する選択肢が多い</li>
+                    <li><strong>大学が少ない</strong>：県内に選択肢が少なく、進学には県外移動が必須</li>
+                </ul>
+
+                <h3>女子優位に転じた県の特徴</h3>
+                <p>逆に、女子優位が顕著な県（格差+3pt以上）の特徴は：</p>
+                <ul>
+                    <li><strong>都市部</strong>：東京都、神奈川県など、大学が豊富</li>
+                    <li><strong>地方中核都市</strong>：熊本県、沖縄県など、地元の大学が女子に人気</li>
+                    <li><strong>第三次産業中心</strong>：事務職などホワイトカラーの職が多く、学歴重視</li>
+                </ul>
+
+                <h2>7. 「男女比の影響」という仮説の検証</h2>
+                <p>ここで一つ、重要な仮説を検証します。「進学率の男女差は、単にその県の高校卒業生の男女比が偏っているからではないか？」というものです。</p>
+
+                <figure class="article-figure">
+                    <img src="2025教育基本調査/correlation_ratio_gap_2025.png" alt="相関図">
+                    <figcaption>図5：卒業生男女比と進学率格差の相関（2025年度）</figcaption>
+                </figure>
+
+                <h3>分析結果：ほぼ無相関</h3>
+                <p>分析の結果、<strong>相関係数はわずか0.07</strong>。統計学的には、0に近いほど「関係がない」ことを示しますので、この結果は「卒業生の男女比と進学率格差にはほとんど関係がない」ことを意味します。
+                </p>
+
+                <p>つまり、「卒業生の数が男子の方が多いから進学率が低く見える」といった物理的・統計的な要因ではなく、<strong>より本質的な社会構造の問題</strong>として格差が存在していると言えます。</p>
+
+                <h3>では何が格差を生んでいるのか</h3>
+                <p>統計的な偶然では説明できないとなると、考えられる要因は：</p>
+                <ul>
+                    <li><strong>産業構造</strong>：地元の製造業への就職など、男子の「大学に行かない選択肢」が豊富</li>
+                    <li><strong>経済的要因</strong>：進学費用の負担を考えた際、「男子は就職、女子は進学」という判断</li>
+                    <li><strong>社会的期待</strong>：「男子は早く自立すべき」「女子は学歴が必要」といった意識</li>
+                    <li><strong>地理的要因</strong>：県外進学への心理的・経済的ハードルが男女で異なる</li>
+                </ul>
+
+                <p>これらは複合的に作用しており、単一の要因で説明することは困難ですが、データはこうした構造的な問題の存在を強く示唆しています。</p>
+
+                <h2>8. 2024年度との比較：この1年間で何が変わったのか</h2>
+                <p>最後に、直近1年間（2024→2025年度）の変化を詳しく見てみましょう。</p>
+
+                <figure class="article-figure">
+                    <img src="2025教育基本調査/gap_comparison_dumbbell.png" alt="2024→2025の変化">
+                    <figcaption>図6：大学進学率の男女差の変化（2024→2025年度）</figcaption>
+                </figure>
+
+                <h3>全国的な改善傾向</h3>
+                <p>このダンベルチャートを見ると、ほとんどの都道府県で線が右側（0%ライン）に向かって伸びていることがわかります。つまり、<strong>1年間で全国的に格差が縮小した</strong>ということです。
+                </p>
+
+                <h3>特に改善が顕著だった県</h3>
+                <ul>
+                    <li><strong>北海道</strong>：-7.8pt → -6.5pt（1.3pt改善）</li>
+                    <li><strong>茨城県</strong>：-4.8pt → -3.4pt（1.4pt改善）</li>
+                    <li><strong>島根県</strong>：-3.5pt → -1.8pt（1.7pt改善）</li>
+                </ul>
+
+                <p>これらの県では、女子の進学率が男子を上回るペースで上昇したことが要因と考えられます。</p>
+
+                <hr>
+
+                <h2>おわりに：データが示す「是正」の確かな足跡と今後の展望</h2>
+                <p>今回の11年間にわたる詳細な分析で明らかになったのは、日本の大学進学の現場において、確実に<strong>「男女格差の是正」が進んでいる</strong>という事実です。</p>
+
+                <h3>分析から得られた主要な知見</h3>
+                <ul>
+                    <li><strong>全国の格差（中央値）が11年間で半分以下に縮小</strong>（-4.36pt → -1.80pt）</li>
+                    <li><strong>2025年度は過去最大の改善幅</strong>を記録（前年比+1.26pt）</li>
+                    <li><strong>女子の進学率の伸びが男子を上回る</strong>傾向が続いている</li>
+                    <li><strong>短大を含めた高等教育全体では女子が主流</strong>になりつつある</li>
+                    <li><strong>都市部ほど格差が小さく、進学率も高い</strong>という地域差</li>
+                    <li><strong>格差は統計的偶然ではなく、社会構造を反映</strong>している</li>
+                </ul>
+
+                <h3>今後の注目点</h3>
+                <p>この傾向が続くと、近い将来「全国平均で女子の進学率が男子を上回る」日が来るかもしれません。実際、東京都や熊本県など、既に女子優位に転じた県も増えています。</p>
+
+                <p>また、短大進学率の減少と四年制大学への進学率上昇が同時に進む中、今後は「大学のみ」でのデータがより重要になってきます。女子の四年制大学志向がさらに強まれば、格差是正のスピードは加速するでしょう。</p>
+
+                <h3>データの向こう側にあるもの</h3>
+                <p>しかし、忘れてはならないのは、これらの数字の向こう側には、一人ひとりの若者の人生の選択があるということです。データが示す「是正」の傾向は歓迎すべきものですが、同時に：</p>
+                <ul>
+                    <li>地方における進学環境の整備</li>
+                    <li>経済的理由で進学を諦めざるを得ない層への支援</li>
+                    <li>「進学しない選択」もまた尊重される社会</li>
+                </ul>
+                <p>といった、より本質的な教育の機会均等についても、引き続き注視していく必要があります。</p>
+
+                <p>各地域の若者の選択の背景を、データを通して今後もしっかりと追っていきたいと思います。</p>
+
+                <div class="note-tags">
+                    <span>#データ分析</span>
+                    <span>#学校基本調査</span>
+                    <span>#教育</span>
+                    <span>#統計</span>
+                    <span>#大学進学</span>
+                    <span>#男女格差</span>
+                    <span>#11年間の変遷</span>
+                    <span>#地域格差</span>
+                    <span>#高等教育</span>
+                </div>
+            </div>
+
+            <footer class="note-footer">
+                <div class="reaction-buttons">
+                    <button class="btn-like"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666"
+                            stroke-width="2">
+                            <path
+                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg> <span>256</span></button>
+                    <button class="btn-share"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666"
+                            stroke-width="2">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                            <polyline points="16 6 12 2 8 6" />
+                            <line x1="12" y1="2" x2="12" y2="15" />
+                        </svg></button>
+                </div>
+            </footer>
+        </div>
+    </article>
+</body>
+
+</html>
