@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.npm-cache/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+dist/
+build/
+university-dashboard/dist/
+
+# Misc
+.DS_Store
+*.pem
+
+# Env
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vite
+.vite/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
