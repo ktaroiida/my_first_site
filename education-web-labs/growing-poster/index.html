@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>栽培チャレンジ 研究ポスター見本</title>
+  <style>
+    :root {
+      --green-900: #0f3d24;
+      --green-800: #145c32;
+      --green-700: #1b7a43;
+      --green-100: #eaf5ec;
+      --green-050: #f6fbf7;
+      --line: #c9d8cc;
+      --text: #1e2621;
+      --muted: #59645d;
+      --accent: #d9472b;
+      --yellow: #fff7d6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #e9eceb;
+      color: var(--text);
+      font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, sans-serif;
+      line-height: 1.62;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 18px auto;
+      padding: 14mm 13mm 12mm;
+      background: #fff;
+      border: 1px solid #d7ded9;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+      position: relative;
+    }
+
+    .poster-header {
+      border-bottom: 4px solid var(--green-800);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .title-area h1 {
+      margin: 0;
+      color: var(--green-900);
+      font-size: 34px;
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    .sample-note {
+      font-size: 13px;
+      color: #333;
+      margin-left: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .subtitle {
+      margin-top: 7px;
+      font-size: 19px;
+      color: var(--green-800);
+      font-weight: 800;
+    }
+
+    .meta {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #222;
+      font-weight: 700;
+    }
+
+    .ppdac-badge {
+      background: var(--green-800);
+      color: white;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-weight: 800;
+      font-size: 14px;
+      line-height: 1.35;
+      min-width: 185px;
+      text-align: left;
+      box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15);
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .left-column {
+      padding-right: 10px;
+      border-right: 2px dashed #b8cabd;
+    }
+
+    .right-column {
+      padding-left: 0;
+    }
+
+    .section {
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      background: linear-gradient(180deg, #fff, var(--green-050));
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green-800);
+      color: white;
+      padding: 7px 10px;
+      font-weight: 900;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .section-header .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      color: var(--green-800);
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .section-body {
+      padding: 10px 12px 12px;
+      font-size: 13.5px;
+    }
+
+    .section-body p {
+      margin: 0 0 8px;
+    }
+
+    .rq {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: var(--yellow);
+      border: 2px solid var(--green-700);
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 900;
+      font-size: 15px;
+      color: var(--green-900);
+    }
+
+    .flow-arrow {
+      text-align: center;
+      color: var(--green-800);
+      font-size: 26px;
+      line-height: 0.8;
+      font-weight: 900;
+      margin: -2px 0 2px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.2em;
+    }
+
+    li {
+      margin-bottom: 2px;
+    }
+
+    .process {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .process-step {
+      border: 1.6px solid var(--green-700);
+      background: #fff;
+      border-radius: 8px;
+      min-height: 62px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 900;
+      color: var(--green-800);
+      position: relative;
+      font-size: 14px;
+    }
+
+    .process-step span {
+      display: block;
+      font-size: 21px;
+      margin-top: 2px;
+    }
+
+    .process-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--green-800);
+      font-size: 20px;
+      z-index: 2;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      font-size: 11.2px;
+      margin: 4px 0 10px;
+    }
+
+    th, td {
+      border: 1px solid #aab9ae;
+      padding: 4px 5px;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--green-800);
+      color: #fff;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    td.num-cell {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 8px;
+    }
+
+    .chart-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 7px 7px 4px;
+    }
+
+    .chart-title {
+      text-align: center;
+      color: var(--green-800);
+      font-weight: 900;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .photo-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .photo-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      overflow: hidden;
+      text-align: center;
+      font-size: 9.5px;
+      font-weight: 700;
+    }
+
+    .photo-label {
+      background: var(--green-800);
+      color: white;
+      padding: 2px;
+      font-weight: 900;
+    }
+
+    .plant-visual {
+      height: 58px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #f7fff6, #edf5ee);
+      font-size: 29px;
+      letter-spacing: -3px;
+    }
+
+    .callout {
+      background: #fff;
+      border: 1.7px solid var(--green-700);
+      border-radius: 9px;
+      padding: 9px 10px;
+      margin-top: 8px;
+    }
+
+    .callout-title {
+      font-weight: 900;
+      color: var(--green-800);
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr 28px 1fr;
+      gap: 7px;
+      align-items: center;
+      margin-top: 9px;
+    }
+
+    .mini-photo {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .mini-photo .mini-title {
+      background: var(--green-100);
+      color: var(--green-900);
+      padding: 4px;
+      font-weight: 900;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mini-photo .visual {
+      height: 84px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #f7fff6, #edf5ee);
+      font-size: 42px;
+    }
+
+    .mini-photo .caption {
+      padding: 4px;
+      background: #fff;
+    }
+
+    .big-arrow {
+      text-align: center;
+      color: var(--green-800);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .conclusion-box {
+      margin-top: 10px;
+      border: 2px solid var(--green-800);
+      border-radius: 10px;
+      padding: 11px 12px;
+      background: #fffdf0;
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 8px;
+      align-items: center;
+      font-weight: 900;
+      color: var(--green-900);
+      font-size: 15px;
+    }
+
+    .trophy {
+      font-size: 34px;
+      text-align: center;
+    }
+
+    .discussion-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 13.5px;
+    }
+
+    .discussion-list li {
+      border-bottom: 1px dashed #b9c8bd;
+      padding: 6px 0;
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 6px;
+      align-items: center;
+      margin: 0;
+    }
+
+    .discussion-list li:last-child {
+      border-bottom: none;
+    }
+
+    .icon {
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .footer-learning {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 88px 1fr 1fr 1fr;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .footer-title {
+      background: var(--green-800);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 900;
+      text-align: center;
+      padding: 8px;
+    }
+
+    .learning-item {
+      padding: 8px 10px;
+      border-left: 1px solid var(--line);
+      font-size: 11.5px;
+    }
+
+    .learning-item strong {
+      display: block;
+      color: var(--green-800);
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    .edit-note {
+      position: absolute;
+      bottom: 4mm;
+      right: 13mm;
+      font-size: 9px;
+      color: #8a948e;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        margin: 0;
+        width: 210mm;
+        min-height: 297mm;
+        border: none;
+        box-shadow: none;
+        page-break-after: always;
+      }
+
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="poster-header">
+      <div class="title-area">
+        <h1>栽培チャレンジ 研究ポスター見本 <span class="sample-note">※これは見本です</span></h1>
+        <div class="subtitle">テーマ：唐辛子の実を多く収穫するには？</div>
+        <div class="meta">作物：唐辛子　／　班：2年A組 3班　／　単元：生物育成の技術</div>
+      </div>
+      <div class="ppdac-badge">
+        PPDAC = Problem / Plan<br>
+        Data / Analysis / Conclusion
+      </div>
+    </header>
+
+    <section class="columns">
+      <div class="left-column">
+        <section class="section">
+          <div class="section-header"><span class="num">1</span>1. Problem（問題）</div>
+          <div class="section-body">
+            <p>私たちの班は、唐辛子の実をできるだけ多く収穫することを目標にした。観察を続ける中で、実のつき方に差が見られたため、日当たり・水やり・肥料が収量にどう関係するかを確かめたいと考えた。</p>
+            <div class="rq">RQ：唐辛子の実を多く収穫するには、<br>どんな育て方がよいのか？</div>
+          </div>
+        </section>
+
+        <div class="flow-arrow">▼</div>
+
+        <section class="section">
+          <div class="section-header"><span class="num">2</span>2. Plan（計画）</div>
+          <div class="section-body">
+            <ul>
+              <li>日当たりのよい場所で育てる</li>
+              <li>土の表面が乾いたら水やりをする</li>
+              <li>1週間に1回、草丈・花の数・実の数を記録する</li>
+              <li>葉の色や元気の様子も観察する</li>
+              <li>必要に応じて追肥や置き場所の変更を行う</li>
+            </ul>
+
+            <div class="process">
+              <div class="process-step">計画<span>📋</span></div>
+              <div class="process-step">栽培<span>🌱</span></div>
+              <div class="process-step">記録<span>📝</span></div>
+              <div class="process-step">改善<span>🚿</span></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="flow-arrow">▼</div>
+
+        <section class="section">
+          <div class="section-header"><span class="num">3</span>3. Data（データ）</div>
+          <div class="section-body">
+            <table aria-label="唐辛子の栽培記録">
+              <thead>
+                <tr>
+                  <th>日付</th>
+                  <th>草丈<br>(cm)</th>
+                  <th>花の数</th>
+                  <th>実の数</th>
+                  <th>気づいたこと</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>5/12</td><td class="num-cell">12</td><td class="num-cell">0</td><td class="num-cell">0</td><td>苗を植えた。葉の色はよい。</td>
+                </tr>
+                <tr>
+                  <td>5/26</td><td class="num-cell">18</td><td class="num-cell">0</td><td class="num-cell">0</td><td>葉が増えてきた。</td>
+                </tr>
+                <tr>
+                  <td>6/9</td><td class="num-cell">28</td><td class="num-cell">3</td><td class="num-cell">0</td><td>花が咲き始めた。</td>
+                </tr>
+                <tr>
+                  <td>6/23</td><td class="num-cell">40</td><td class="num-cell">8</td><td class="num-cell">4</td><td>葉の色が少しうすい。</td>
+                </tr>
+                <tr>
+                  <td>7/7</td><td class="num-cell">55</td><td class="num-cell">12</td><td class="num-cell">10</td><td>実の数が増えた。</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="charts">
+              <div class="chart-card">
+                <div class="chart-title">草丈の変化</div>
+                <svg viewBox="0 0 220 150" role="img" aria-label="草丈の折れ線グラフ">
+                  <line x1="35" y1="15" x2="35" y2="118" stroke="#777" stroke-width="1" />
+                  <line x1="35" y1="118" x2="205" y2="118" stroke="#777" stroke-width="1" />
+                  <g stroke="#e1e7e3" stroke-width="1">
+                    <line x1="35" y1="92" x2="205" y2="92" />
+                    <line x1="35" y1="66" x2="205" y2="66" />
+                    <line x1="35" y1="40" x2="205" y2="40" />
+                  </g>
+                  <polyline points="35,102 77,94 120,81 162,61 205,46" fill="none" stroke="#1b7a43" stroke-width="4" />
+                  <g fill="#1b7a43">
+                    <circle cx="35" cy="102" r="4" /><circle cx="77" cy="94" r="4" /><circle cx="120" cy="81" r="4" /><circle cx="162" cy="61" r="4" /><circle cx="205" cy="46" r="4" />
+                  </g>
+                  <g font-size="10" fill="#222" font-weight="700">
+                    <text x="27" y="105">12</text><text x="69" y="91">18</text><text x="112" y="78">28</text><text x="154" y="58">40</text><text x="196" y="42">55</text>
+                    <text x="27" y="137">5/12</text><text x="67" y="137">5/26</text><text x="113" y="137">6/9</text><text x="153" y="137">6/23</text><text x="196" y="137">7/7</text>
+                  </g>
+                  <text x="3" y="22" font-size="10" fill="#333">(cm)</text>
+                </svg>
+              </div>
+
+              <div class="chart-card">
+                <div class="chart-title">実の数</div>
+                <svg viewBox="0 0 220 150" role="img" aria-label="実の数の棒グラフ">
+                  <line x1="35" y1="15" x2="35" y2="118" stroke="#777" stroke-width="1" />
+                  <line x1="35" y1="118" x2="205" y2="118" stroke="#777" stroke-width="1" />
+                  <g stroke="#e1e7e3" stroke-width="1">
+                    <line x1="35" y1="84" x2="205" y2="84" />
+                    <line x1="35" y1="50" x2="205" y2="50" />
+                  </g>
+                  <g fill="#1b7a43">
+                    <rect x="28" y="116" width="16" height="2" />
+                    <rect x="70" y="116" width="16" height="2" />
+                    <rect x="113" y="116" width="16" height="2" />
+                    <rect x="155" y="84" width="16" height="34" />
+                    <rect x="198" y="35" width="16" height="83" />
+                  </g>
+                  <g font-size="10" fill="#222" font-weight="700">
+                    <text x="31" y="111">0</text><text x="73" y="111">0</text><text x="116" y="111">0</text><text x="158" y="80">4</text><text x="198" y="31">10</text>
+                    <text x="27" y="137">5/12</text><text x="67" y="137">5/26</text><text x="113" y="137">6/9</text><text x="153" y="137">6/23</text><text x="196" y="137">7/7</text>
+                  </g>
+                  <text x="3" y="22" font-size="10" fill="#333">(個)</text>
+                </svg>
+              </div>
+            </div>
+
+            <div class="photo-strip">
+              <div class="photo-card">
+                <div class="photo-label">5/12</div>
+                <div class="plant-visual">🌱</div>
+                <div>苗を植えた日</div>
+              </div>
+              <div class="photo-card">
+                <div class="photo-label">5/26</div>
+                <div class="plant-visual">🌿</div>
+                <div>葉が増えた</div>
+              </div>
+              <div class="photo-card">
+                <div class="photo-label">6/9</div>
+                <div class="plant-visual">🌿✿</div>
+                <div>花が咲いた</div>
+              </div>
+              <div class="photo-card">
+                <div class="photo-label">6/23</div>
+                <div class="plant-visual">🌿🌶</div>
+                <div>実がつき始めた</div>
+              </div>
+              <div class="photo-card">
+                <div class="photo-label">7/7</div>
+                <div class="plant-visual">🌶🌶</div>
+                <div>赤い実が増えた</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="right-column">
+        <section class="section">
+          <div class="section-header"><span class="num">4</span>4. Analysis（分析）</div>
+          <div class="section-body">
+            <p>草丈は継続的に伸び、6月以降に花の数が増えた。その後、花の増加に続いて実の数も増えた。6/23には葉の色がややうすくなっていたため、栄養不足の可能性が考えられた。データを見ると、成長の変化と観察記録を合わせて考えることが重要だと分かる。</p>
+
+            <div class="callout">
+              <div class="callout-title">データから見えること 🔍</div>
+              <ul>
+                <li>6月後半から実が増えた</li>
+                <li>花の増加が実の増加につながった</li>
+                <li>葉の色の変化が改善のきっかけになった</li>
+              </ul>
+
+              <div class="before-after">
+                <div class="mini-photo">
+                  <div class="mini-title">追肥前（6/20頃）</div>
+                  <div class="visual">🍃</div>
+                  <div class="caption">葉の色がややうすい</div>
+                </div>
+                <div class="big-arrow">→</div>
+                <div class="mini-photo">
+                  <div class="mini-title">追肥後（7/2頃）</div>
+                  <div class="visual">🌿</div>
+                  <div class="caption">葉の色が濃く、元気に！</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="flow-arrow">▼</div>
+
+        <section class="section">
+          <div class="section-header"><span class="num">5</span>5. Conclusion（結論）</div>
+          <div class="section-body">
+            <p>唐辛子の実を多く収穫するには、日当たりを確保し、成長の様子を記録しながら、必要に応じて追肥などの改善を行うことが大切だと考えられる。特に、葉の色や花の数の変化を見て手入れを見直すことが、収量の増加につながった可能性がある。</p>
+
+            <div class="conclusion-box">
+              <div class="trophy">🏆</div>
+              <div>結論：<br>「観察 → 記録 → 改善」を続けることが、収量アップにつながる。</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="flow-arrow">▼</div>
+
+        <section class="section">
+          <div class="section-header"><span class="num">6</span>6. Discussion / 次にやるなら</div>
+          <div class="section-body">
+            <ul class="discussion-list">
+              <li><span class="icon">💧</span><span>水やりの量も数値で記録したい</span></li>
+              <li><span class="icon">🧪</span><span>肥料あり・なしで比較してみたい</span></li>
+              <li><span class="icon">👥</span><span>他の班の方法とも比べたい</span></li>
+              <li><span class="icon">☀️</span><span>気温や日照時間との関係も調べたい</span></li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <footer class="footer-learning">
+      <div class="footer-title">学び</div>
+      <div class="learning-item">
+        <strong>Problem：問いを立てる</strong>
+        疑問を見つけて、研究のテーマを決める。
+      </div>
+      <div class="learning-item">
+        <strong>Data：記録を残す</strong>
+        観察や測定をして、データを集める。
+      </div>
+      <div class="learning-item">
+        <strong>Conclusion：結果をもとに改善する</strong>
+        データを分析し、次につなげていく。
+      </div>
+    </footer>
+
+    <div class="edit-note">HTML editable poster sample / A4 portrait</div>
+  </main>
+</body>
+</html>
