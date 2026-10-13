@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>歯車の回転を調べよう</title>
+  <!-- Google Fonts: M PLUS Rounded 1c (親しみやすさ) & Outfit (数値の視認性) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- MathJax for rendering math expressions (モダンブラウザ対応のためpolyfill.ioは削除) -->
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-container">
+      <h1 class="app-title">⚙️ 歯車の回転を調べよう</h1>
+      <p class="app-question">【本時の問い】歯数を変えると、回転の速さと向きはどう変わるだろう？</p>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- 左側：設定パネル -->
+    <section class="panel settings-panel" id="panel-settings">
+      <h2 class="panel-title">⚙️ 設定パネル</h2>
+      
+      <!-- モード切り替え -->
+      <div class="control-group">
+        <label class="control-label">歯車の数</label>
+        <div class="toggle-buttons">
+          <button type="button" class="btn-toggle active" id="btn-mode-2" onclick="setGearCount(2)">2個 (基本)</button>
+          <button type="button" class="btn-toggle" id="btn-mode-3" onclick="setGearCount(3)">3個 (発展)</button>
+          <button type="button" class="btn-toggle" id="btn-mode-7" onclick="setGearCount(7)">7個 (鬼)</button>
+        </div>
+      </div>
+
+      <!-- 機構タイプ切り替え -->
+      <div class="control-group">
+        <label class="control-label">機構の種類</label>
+        <div class="toggle-buttons mechanism-buttons">
+          <button type="button" class="btn-toggle active" id="btn-type-spur" onclick="setMechanismType('spur')">平歯車</button>
+          <button type="button" class="btn-toggle" id="btn-type-internal" onclick="setMechanismType('internal')">内歯車</button>
+          <button type="button" class="btn-toggle" id="btn-type-rack" onclick="setMechanismType('rack')">ラック&ピニオン</button>
+          <button type="button" class="btn-toggle" id="btn-type-bevel" onclick="setMechanismType('bevel')">かさ歯車</button>
+        </div>
+      </div>
+
+      <!-- 歯車Aの設定 -->
+      <div class="control-group gear-control" id="control-gear-a">
+        <div class="gear-label-container">
+          <span class="gear-badge gear-a-badge">歯車A (入力)</span>
+          <span class="gear-val" id="val-gear-a">20 歯</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-gear-a" min="8" max="60" value="20" oninput="updateGearGears()">
+      </div>
+
+      <!-- 歯車Bの設定 -->
+      <div class="control-group gear-control" id="control-gear-b">
+        <div class="gear-label-container">
+          <span class="gear-badge gear-b-badge">歯車B</span>
+          <span class="gear-val" id="val-gear-b">40 歯</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-gear-b" min="8" max="60" value="40" oninput="updateGearGears()">
+      </div>
+
+      <!-- 歯車Cの設定 (デフォルト非表示) -->
+      <div class="control-group gear-control hidden" id="control-gear-c">
+        <div class="gear-label-container">
+          <span class="gear-badge gear-c-badge">歯車C (出力)</span>
+          <span class="gear-val" id="val-gear-c">20 歯</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-gear-c" min="8" max="60" value="20" oninput="updateGearGears()">
+      </div>
+
+      <!-- 鬼モード用の歯車設定 -->
+      <div class="control-group gear-control hidden" id="control-gear-d">
+        <div class="gear-label-container">
+          <span class="gear-badge gear-d-badge">歯車D</span>
+          <span class="gear-val" id="val-gear-d">32 歯</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-gear-d" min="8" max="60" value="32" oninput="updateGearGears()">
+      </div>
+
+      <div class="control-group gear-control hidden" id="control-gear-e">
+        <div class="gear-label-container">
+          <span class="gear-badge gear-e-badge">歯車E</span>
+          <span class="gear-val" id="val-gear-e">16 歯</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-gear-e" min="8" max="60" value="16" oninput="updateGearGears()">
+      </div>
+
+      <div class="control-group gear-control hidden" id="control-gear-f">
+        <div class="gear-label-container">
+          <span class="gear-badge gear-f-badge">歯車F</span>
+          <span class="gear-val" id="val-gear-f">48 歯</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-gear-f" min="8" max="60" value="48" oninput="updateGearGears()">
+      </div>
+
+      <div class="control-group gear-control hidden" id="control-gear-g">
+        <div class="gear-label-container">
+          <span class="gear-badge gear-g-badge">歯車G (出力)</span>
+          <span class="gear-val" id="val-gear-g">24 歯</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-gear-g" min="8" max="60" value="24" oninput="updateGearGears()">
+      </div>
+
+      <!-- 入力回転数 -->
+      <div class="control-group">
+        <div class="gear-label-container">
+          <span class="control-label">Aの回転数</span>
+          <span class="gear-val" id="val-speed-a">6 rpm</span>
+        </div>
+        <input type="range" class="range-slider" id="slider-speed-a" min="1" max="20" value="6" oninput="updateSpeedA()">
+        <small class="help-text">※6rpmは10秒で1回転します。</small>
+      </div>
+
+      <!-- 入力回転方向 -->
+      <div class="control-group">
+        <label class="control-label">Aの回転方向</label>
+        <div class="toggle-buttons">
+          <button type="button" class="btn-toggle active" id="btn-dir-cw" onclick="setDirA('cw')">時計回り ↻</button>
+          <button type="button" class="btn-toggle" id="btn-dir-ccw" onclick="setDirA('ccw')">反時計回り ↺</button>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary btn-reset" onclick="resetSimulator()">⚙️ リセット</button>
+    </section>
+
+    <!-- 中央：シミュレーター -->
+    <section class="panel simulator-panel">
+      <div class="simulator-header">
+        <h2 class="panel-title">🖥️ シミュレーター</h2>
+        <div class="sim-actions">
+          <button class="btn btn-primary" id="btn-run" onclick="toggleRun()" disabled>🔓 動かして確認</button>
+        </div>
+      </div>
+      
+      <!-- 警告/アナウンスバナー -->
+      <div class="banner warning-banner" id="prediction-lock-banner">
+        <span>⚠️ <b>右側で「予想」</b>を選択すると、動かせるようになります！</span>
+      </div>
+      <!-- 重複歯数エラーバナー -->
+      <div class="banner error-banner hidden" id="duplicate-teeth-banner">
+        <span>🚫 <b>歯車は違うサイズにしましょう！</b>同じ歯数の歯車は動かせません。</span>
+      </div>
+
+      <div class="canvas-container" style="position: relative;">
+        <!-- 凡例/方向の解説オーバーレイ -->
+        <div class="direction-legend" style="position: absolute; top: 12px; left: 12px; pointer-events: none; background: rgba(255, 255, 255, 0.9); padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 11px; color: #334155; z-index: 10; display: flex; flex-direction: column; gap: 4px; font-family: 'M PLUS Rounded 1c', sans-serif; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+          <div><b>🔄 「向き」の見かた (Aと比べる):</b></div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="background: #fee2e2; color: #dc2626; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 10px;">反対向き</span>
+            <span>Aが <b>右回り ↻</b> のとき ➔ <b>左回り ↺</b> になる</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="background: #dbeafe; color: #2563eb; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 10px;">同じ向き</span>
+            <span>Aが <b>右回り ↻</b> のとき ➔ <b>右回り ↻</b> になる</span>
+          </div>
+          <div id="rack-legend-detail" style="border-top: 1px solid #e2e8f0; margin-top: 4px; padding-top: 4px; display: none;">
+            <b>📏 ラックの移動:</b><br>
+            ・ピニオンが <b>右回り ↻</b> ➔ ラックは <b>左へ ➔ (←)</b><br>
+            ・ピニオンが <b>左回り ↺</b> ➔ ラックは <b>右へ ➔ (→)</b>
+          </div>
+        </div>
+
+        <!-- SVGで正確な歯車を描画 -->
+        <svg id="svg-canvas" viewBox="0 0 800 400" width="100%" height="100%">
+          <!-- 動的に歯車、矢印、ガイド線を描画 -->
+        </svg>
+        <div id="three-bevel-container" class="three-bevel-container hidden">
+          <div class="three-label three-label-input">A 入力軸</div>
+          <div class="three-label three-label-output">B 90度出力軸</div>
+        </div>
+      </div>
+
+      <!-- 日本語の基本・補足説明 -->
+      <div class="description-block card">
+        <p>💡 <b>歯車のきほん</b>: 歯と歯がかみ合うことで回転を伝えます。かみ合う2つの歯車は、<b>反対向き</b>に回ります。</p>
+      </div>
+    </section>
+
+    <!-- 右側：学習支援（タブ切り替え：1. 予想・結果 / 2. 問題 / 3. 振り返り） -->
+    <section class="panel learning-panel">
+      <!-- タブナビゲーション -->
+      <div class="tab-navigation">
+        <button class="tab-btn active" id="tab-btn-explore" onclick="switchTab('explore')">📊 予想と結果</button>
+        <button class="tab-btn" id="tab-btn-quiz" onclick="switchTab('quiz')">✏️ 問題</button>
+        <button class="tab-btn" id="tab-btn-reflection" onclick="switchTab('reflection')">📝 振り返り</button>
+      </div>
+
+      <!-- タブコンテンツ 1: 予想と結果 -->
+      <div class="tab-content" id="tab-explore">
+        <!-- 1. 予想エリア -->
+        <div class="card card-prediction" id="card-prediction">
+          <h3 class="card-title">📝 Step 1: 予想してみよう</h3>
+          
+          <div class="prediction-question">
+            <p id="pred-q-dir">出力側の歯車は、Aと比べてどちら向きに回るかな？</p>
+            <div class="pred-options" id="options-dir">
+              <button class="btn btn-outline" id="btn-pred-dir-same" onclick="selectPrediction('dir', 'same', this)">同じ向き</button>
+              <button class="btn btn-outline" id="btn-pred-dir-opp" onclick="selectPrediction('dir', 'opposite', this)">反対向き</button>
+              <button class="btn btn-outline" id="btn-pred-dir-unk" onclick="selectPrediction('dir', 'unknown', this)">わからない</button>
+            </div>
+          </div>
+
+          <div class="prediction-question">
+            <p id="pred-q-speed">出力側の回転数は、Aと比べてどうなるかな？</p>
+            <div class="pred-options" id="options-speed">
+              <button class="btn btn-outline" id="btn-pred-speed-fast" onclick="selectPrediction('speed', 'fast', this)">速くなる</button>
+              <button class="btn btn-outline" id="btn-pred-speed-slow" onclick="selectPrediction('speed', 'slow', this)">遅くなる</button>
+              <button class="btn btn-outline" id="btn-pred-speed-same" onclick="selectPrediction('speed', 'same', this)">同じ</button>
+              <button class="btn btn-outline" id="btn-pred-speed-unk" onclick="selectPrediction('speed', 'unknown', this)">わからない</button>
+            </div>
+          </div>
+
+          <div class="prediction-question">
+            <p id="pred-q-torque">出力側のまわす力（トルク）は、Aと比べてどうなるかな？</p>
+            <div class="pred-options" id="options-torque">
+              <button class="btn btn-outline" id="btn-pred-torque-strong" onclick="selectPrediction('torque', 'strong', this)">強くなる</button>
+              <button class="btn btn-outline" id="btn-pred-torque-weak" onclick="selectPrediction('torque', 'weak', this)">弱くなる</button>
+              <button class="btn btn-outline" id="btn-pred-torque-same" onclick="selectPrediction('torque', 'same', this)">同じ</button>
+              <button class="btn btn-outline" id="btn-pred-torque-unk" onclick="selectPrediction('torque', 'unknown', this)">わからない</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 結果・計算式（シミュレータ動作時に開く） -->
+        <div class="card card-results hidden" id="card-results">
+          <h3 class="card-title">📊 Step 2: 結果と計算のひみつ</h3>
+          
+          <!-- 採点結果の表示エリア -->
+          <div id="prediction-grading" class="prediction-grading">
+            <!-- JSで動的に採点結果を挿入 -->
+          </div>
+          
+          <div class="result-row">
+            <div class="result-item text-center">
+              <span class="label">Aの歯数 : 出力歯数</span>
+              <span class="val accent" id="ratio-teeth">20 : 40</span>
+            </div>
+            <div class="result-item text-center">
+              <span class="label">Aの回転数 : 出力回転数</span>
+              <span class="val accent" id="ratio-speed">6 : 3</span>
+            </div>
+            <div class="result-item text-center" style="grid-column: span 2;">
+              <span class="label">Aのトルク : 出力トルク (入力トルクを10N·mとした場合)</span>
+              <span class="val accent" id="ratio-torque">10 N·m : 20 N·m</span>
+            </div>
+          </div>
+
+          <!-- 3つの説明段階 -->
+          <div class="explanation-flow">
+            <div class="exp-step">
+              <span class="step-num">段階 1：ことば</span>
+              <p class="exp-text" id="explanation-words">BはAの2倍の歯数なので、Bの回転数はAの半分になります。</p>
+            </div>
+            <div class="exp-step">
+              <span class="step-num">段階 2：比（ひ）</span>
+              <p class="exp-text" id="explanation-ratio">比で表すと、歯数比が1:2のとき、回転数比は2:1（逆）になります。</p>
+            </div>
+            <div class="exp-step">
+              <span class="step-num">段階 3：計算式</span>
+              <div class="formula-container">
+                <p class="exp-text" id="explanation-formula-desc">
+                  出力回転数 ＝ Aの回転数 × Aの歯数 ÷ 出力歯数
+                </p>
+                <div id="explanation-formula-math">
+                  <!-- MathJax dynamic rendering target -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. ヒントアコーディオン -->
+        <div class="card card-hints">
+          <h3 class="card-title">💡 困ったときのヒント</h3>
+          
+          <div class="accordion-item">
+            <button class="accordion-header" id="btn-hint-1" onclick="toggleAccordion('hint-1')">🔍 ヒント 1：歯数の多さに注目しよう</button>
+            <div class="accordion-content hidden" id="hint-1">
+              <p>歯数が多い歯車はゆっくり、少ない歯車は速く回るよ。</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-header" id="btn-hint-2" onclick="toggleAccordion('hint-2')">⚙️ ヒント 2：1周するのに進む歯の数</button>
+            <div class="accordion-content hidden" id="hint-2">
+              <p>歯が多い歯車は1周するまでにたくさんの歯が進む必要があるため、同じ時間では少なく回る（ゆっくりになる）んだ。</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-header" id="btn-hint-3" onclick="toggleAccordion('hint-3')">📐 ヒント 3：具体例で考えてみよう</button>
+            <div class="accordion-content hidden" id="hint-3">
+              <p>Aが20歯、Bが40歯のとき、BはAの2倍の歯数です。Aが2周（40歯分）回って、やっとBが1周回ることになります。</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-header" id="btn-hint-4" onclick="toggleAccordion('hint-4')">🖊️ ヒント 4：回転数はどうなる？</button>
+            <div class="accordion-content hidden" id="hint-4">
+              <p>歯数が2倍になると回転数は半分になり、歯数と回転数は逆（反比例）の関係になります。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- タブコンテンツ 2: チャレンジ問題 -->
+      <div class="tab-content hidden" id="tab-quiz">
+        <div class="card card-quiz-container">
+          <h3 class="card-title">✏️ チャレンジ問題</h3>
+          <div id="quiz-container">
+            <div class="quiz-question" id="quiz-question-text">
+              Aは20歯、Bは40歯です。Aが1分間に6回転するとき、Bは1分間に何回転しますか？
+            </div>
+            <div class="quiz-options" id="quiz-options-container">
+              <!-- 動的生成 -->
+            </div>
+            <div class="quiz-feedback hidden" id="quiz-feedback">
+              <p class="feedback-status" id="quiz-feedback-status">⭕ 正解！</p>
+              <p class="feedback-explanation" id="quiz-feedback-explanation">解説がここに入ります。</p>
+              <button class="btn btn-primary" id="btn-next-quiz" onclick="nextQuiz()">次の問題へ ➔</button>
+            </div>
+            <div class="quiz-progress" id="quiz-progress-bar">
+              問題 1 / 3
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- タブコンテンツ 3: 振り返り -->
+      <div class="tab-content hidden" id="tab-reflection">
+        <div class="card card-reflection-container">
+          <h3 class="card-title">📝 本日の振り返り</h3>
+          <p class="help-text">今日学習した歯車のルールを、まだ知らない人に説明する文章を作ってみよう！</p>
+          <textarea class="textarea-reflection" id="text-reflection" placeholder="例：かみ合う歯車は反対に回り、歯数が多い歯車ほどゆっくり回ります。歯数と回転数は逆の関係（反比例）になり、歯数×回転数は常に等しくなります。"></textarea>
+          <div class="reflection-actions">
+            <button class="btn btn-primary" onclick="submitReflection()">振り返りを保存・ダウンロード</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
