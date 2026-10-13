@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>統計フロー：データ分析と検定</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --main: #2563eb;
+      --main-dark: #1d4ed8;
+      --sub: #eef2ff;
+      --green-bg: #ecfdf5;
+      --green-line: #a7f3d0;
+      --green-text: #065f46;
+      --yellow-bg: #fff7ed;
+      --yellow-line: #fed7aa;
+      --red-bg: #fef2f2;
+      --red-line: #fecaca;
+      --red-text: #991b1b;
+      --purple-bg: #f5f3ff;
+      --purple-line: #ddd6fe;
+      --purple-text: #5b21b6;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: white;
+      padding: 34px 18px;
+    }
+
+    .inner, main {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      line-height: 1.25;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.94;
+    }
+
+    main {
+      padding: 24px 16px 54px;
+    }
+
+    .home-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .tool-card, .notice, .question-card, .result-card, .memo-card, .roadmap-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .tool-card h2 {
+      margin: 0 0 8px;
+      font-size: 1.3rem;
+    }
+
+    .tool-card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+
+    .notice {
+      background: var(--yellow-bg);
+      border-color: var(--yellow-line);
+      margin-bottom: 18px;
+    }
+
+    .tool-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .tool-header h2 {
+      margin: 0;
+      font-size: 1.35rem;
+    }
+
+    .question-label {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--main);
+      background: var(--sub);
+      padding: 2px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .question-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+
+    .hint {
+      color: var(--muted);
+      margin: 0 0 16px;
+      font-size: 0.96rem;
+    }
+
+    .choices {
+      display: grid;
+      gap: 10px;
+    }
+
+    button { font: inherit; }
+
+    button.choice {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      padding: 14px 16px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.15s ease;
+    }
+
+    button.choice:hover {
+      border-color: var(--main);
+      background: #f8fbff;
+      transform: translateY(-1px);
+    }
+
+    .controls, .button-row, .roadmap-actions, .zoom-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .controls { margin-top: 16px; }
+
+    .small-button {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .small-button.primary {
+      background: var(--main);
+      color: white;
+      border-color: var(--main);
+    }
+
+    .small-button:hover:not(:disabled) { opacity: 0.9; }
+    .small-button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .result-card { border-color: var(--green-line); background: var(--green-bg); }
+    .result-title { margin: 0 0 8px; font-size: 1.55rem; color: var(--green-text); }
+
+    .report-block {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .report-section {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(167, 243, 208, 0.9);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    .report-section h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: #064e3b;
+    }
+
+    .report-section p { margin: 0 0 8px; }
+    .report-section p:last-child { margin-bottom: 0; }
+    .report-section ul, .report-section ol { margin: 6px 0 0; padding-left: 1.35em; }
+
+    .spreadsheet-ok { background: #f0fdf4; border-color: #bbf7d0; }
+    .spreadsheet-partial { background: #fffbeb; border-color: #fde68a; }
+    .spreadsheet-hard { background: #fef2f2; border-color: #fecaca; }
+
+    .formula-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    code, .formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 7px;
+      font-size: 0.92em;
+      overflow-wrap: anywhere;
+    }
+
+    .formula { display: inline-block; }
+
+    .example-text {
+      border-left: 4px solid #10b981;
+      padding-left: 12px;
+      color: #064e3b;
+      background: #f0fdf4;
+      border-radius: 10px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+
+    .path {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 14px;
+      border-top: 1px dashed #cbd5e1;
+      padding-top: 10px;
+    }
+
+    .memo-card { margin-top: 18px; }
+    .memo-card h2 { margin-top: 0; font-size: 1.2rem; }
+    .memo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .mini { border: 1px solid var(--line); border-radius: 14px; padding: 12px; background: #fafafa; }
+    .mini strong { display: block; margin-bottom: 4px; }
+
+    .roadmap-card { margin-bottom: 18px; overflow-x: auto; }
+    .roadmap-card h2 { margin: 0 0 6px; font-size: 1.35rem; }
+    .roadmap-card .hint { margin-bottom: 18px; }
+    .roadmap-actions { margin-bottom: 16px; }
+    .mode-note { color: var(--muted); font-size: 0.92rem; margin: 8px 0 0; }
+    .hidden { display: none; }
+
+    .flowchart-wrap {
+      width: 100%;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #ffffff;
+      padding: 20px;
+      max-height: 78vh;
+      touch-action: none;
+      overscroll-behavior: contain;
+      cursor: grab;
+    }
+
+    .flowchart-wrap.dragging { cursor: grabbing; }
+
+    .zoom-controls { align-items: center; margin: 6px 0 12px; }
+    .zoom-controls input[type="range"] { width: min(260px, 52vw); accent-color: var(--main); }
+    .zoom-label { min-width: 58px; color: var(--muted); font-weight: 700; font-size: 0.9rem; }
+    .flowchart-svg { display: block; min-width: 100%; max-width: none; height: auto; transform-origin: 0 0; }
+
+    .flow-node {
+      width: 100%; height: 100%; border-radius: 14px; border: 1px solid #cbd5e1; background: #ffffff;
+      padding: 10px 12px; font-size: 14px; line-height: 1.45; box-shadow: 0 6px 16px rgba(15,23,42,0.08); overflow: hidden;
+    }
+    .flow-node.question { border-color: #bfdbfe; background: #eff6ff; }
+    .flow-node.result { border-color: #a7f3d0; background: #ecfdf5; }
+    .flow-node.outside { border-color: #fed7aa; background: #fff7ed; }
+    .flow-node .badge { display: inline-block; font-size: 11px; font-weight: 700; color: var(--main-dark); margin-bottom: 4px; }
+    .flow-node .title { font-weight: 800; color: #111827; }
+    .flow-node .detail { margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.35; }
+
+    .edge-label-box {
+      display: inline-block; max-width: 220px; padding: 4px 9px; border-radius: 999px;
+      border: 1px solid #dbeafe; background: rgba(255,255,255,0.96); color: #1e3a8a;
+      font-size: 12px; font-weight: 700; line-height: 1.35; text-align: center; box-shadow: 0 2px 7px rgba(15,23,42,0.08); overflow: hidden;
+    }
+
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; color: var(--muted); font-size: 0.9rem; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; border: 1px solid #cbd5e1; }
+
+    a { color: var(--main-dark); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <h1>統計フロー：データ分析と検定</h1>
+      <p>データに合わせて、グラフ・代表値・分析方法・検定方法を選び、レポートに書くところまで進めるための授業用フローです。</p>
+    </div>
+  </header>
+
+  <main>
+    <section id="home">
+      <div class="notice">
+        <strong>使い方</strong><br>
+        まずは「データ分析フロー」か「検定フロー」を選んでください。結果画面では、選んだ理由、Googleスプレッドシートでの方法、レポートの書き方まで確認できます。
+      </div>
+
+      <div class="home-grid">
+        <div class="tool-card">
+          <h2>データ分析フロー</h2>
+          <p>どんなグラフや分析方法を使うとよいかを選びます。相関・回帰・統計地図の入口まで扱います。</p>
+          <div class="button-row">
+            <button class="small-button primary" onclick="startTool('analysis')">診断モード</button>
+            <button class="small-button" onclick="showRoadmap('analysis')">全体ロードマップ</button>
+          </div>
+        </div>
+        <div class="tool-card">
+          <h2>検定フロー</h2>
+          <p>2つのグループを比較するとき、どの検定を使うかを選びます。発展的な分析として扱います。</p>
+          <div class="button-row">
+            <button class="small-button primary" onclick="startTool('test')">診断モード</button>
+            <button class="small-button" onclick="showRoadmap('test')">全体ロードマップ</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tool" class="hidden">
+      <div class="tool-header">
+        <h2 id="toolTitle"></h2>
+        <div class="button-row">
+          <button class="small-button" onclick="showCurrentRoadmap()">全体ロードマップ</button>
+          <button class="small-button" onclick="showHome()">トップへ戻る</button>
+        </div>
+      </div>
+      <section id="app" class="question-card"></section>
+    </section>
+
+    <section id="roadmap" class="hidden">
+      <div class="tool-header">
+        <h2 id="roadmapTitle"></h2>
+        <div class="button-row">
+          <button class="small-button primary" onclick="startTool(currentRoadmapTool)">診断モードで始める</button>
+          <button class="small-button" onclick="showHome()">トップへ戻る</button>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <h2 id="roadmapHeading"></h2>
+        <p id="roadmapHint" class="hint"></p>
+        <div class="roadmap-actions">
+          <button class="small-button" onclick="toggleRoadmapDetails()" id="detailToggleButton">結果の説明を表示</button>
+        </div>
+        <div class="zoom-controls" aria-label="ロードマップの拡大縮小">
+          <button class="small-button" onclick="zoomRoadmap(-0.15)">−</button>
+          <input id="zoomSlider" type="range" min="50" max="220" value="100" step="5" oninput="setRoadmapZoom(this.value / 100)">
+          <button class="small-button" onclick="zoomRoadmap(0.15)">＋</button>
+          <button class="small-button" onclick="resetRoadmapZoom()">100%</button>
+          <span id="zoomLabel" class="zoom-label">100%</span>
+        </div>
+        <div id="roadmapContent"></div>
+        <p class="mode-note">※ ロードマップは全体像を見るための図です。実際に選ぶときは診断モードで1つずつ確認できます。</p>
+      </div>
+    </section>
+
+    <section class="memo-card">
+      <h2>用語メモ</h2>
+      <div class="memo-grid">
+        <div class="mini"><strong>質的データ</strong>性別、選択肢、地域、血液型、はい/いいえなど、分類で表すデータ。</div>
+        <div class="mini"><strong>量的データ</strong>点数、身長、時間、金額、気温など、数値の大きさに意味があるデータ。</div>
+        <div class="mini"><strong>対応あり</strong>同じ人の前後比較、同じ対象を2回測ったデータ、ペアになっているデータ。</div>
+        <div class="mini"><strong>対応なし</strong>A組とB組、男子と女子など、別々のグループを比較するデータ。</div>
+        <div class="mini"><strong>統計地図</strong>地域ごとの値の違いを、地図の色分けなどで表す方法。都道府県比較に向いています。</div>
+        <div class="mini"><strong>回帰分析</strong>散布図の点の集まりを、だいたい1本の直線 <code>y = ax + b</code> で表す方法。</div>
+        <div class="mini"><strong>期待度数</strong>「差がない」と仮定したとき、クロス集計表の各セルに入ると予想される人数。</div>
+        <div class="mini"><strong>因果関係</strong>相関や回帰だけでは証明できません。他の要因やデータの集め方も考える必要があります。</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const formula = (items) => items;
+    const commonChartMethod = (chartName, extra = []) => [
+      "グラフにしたい表や列を選択する。",
+      "上部メニュー → 挿入 → グラフ を選ぶ。",
+      `右側のグラフエディタで、グラフの種類を「${chartName}」にする。`,
+      "グラフタイトル、横軸、縦軸、単位を確認して整える。",
+      ...extra
+    ];
+
+    const flows = {
+      analysis: {
+        title: "データ分析フロー",
+        start: "dataType",
+        questions: {
+          dataType: {
+            label: "STEP 1",
+            text: "分析したいデータの種類は？",
+            hint: "まず、分類を数えるデータか、数値の大きさを比べるデータかを考えます。",
+            choices: [
+              { text: "質的データ：選択肢、分類、カテゴリなど", next: "qualPurpose" },
+              { text: "量的データ：点数、時間、気温、金額など", next: "timeSeries" }
+            ]
+          },
+          qualPurpose: {
+            label: "STEP 2",
+            text: "何を分析したいですか？",
+            hint: "文章そのものを見るのか、カテゴリの個数や割合を見るのかで変わります。",
+            choices: [
+              { text: "文章・自由記述の内容を分析したい", result: "textMining" },
+              { text: "要素の数や構成を分析したい", next: "tableType" }
+            ]
+          },
+          tableType: {
+            label: "STEP 3",
+            text: "表の形式はどちらですか？",
+            hint: "1つの項目だけを数えるなら集計表、2つ以上の項目の関係を見るならクロス集計表です。",
+            choices: [
+              { text: "1つの項目を数える：集計表", next: "categoryCount" },
+              { text: "2つ以上の項目の関係を見る：クロス集計表", next: "categoryCount" }
+            ]
+          },
+          categoryCount: {
+            label: "STEP 4",
+            text: "項目・カテゴリの数は3つ以内ですか？",
+            hint: "まず、円グラフが読めるくらいカテゴリが少ないかを確認します。",
+            choices: [
+              { text: "はい、3つ以内です", next: "smallCategoryPurpose" },
+              { text: "いいえ、4つ以上あります", next: "manyCategoryPurpose" }
+            ]
+          },
+          smallCategoryPurpose: {
+            label: "STEP 5",
+            text: "割合や内訳を見せたいですか？",
+            hint: "少ないカテゴリで割合を見せるなら円グラフも使えます。差を比べるなら棒グラフが基本です。",
+            choices: [
+              { text: "はい、割合や内訳を見せたい", result: "pieOrBar" },
+              { text: "いいえ、差をはっきり比較したい", result: "barChart" }
+            ]
+          },
+          manyCategoryPurpose: {
+            label: "STEP 5",
+            text: "複数グループの内訳を比較したいですか？",
+            hint: "例：クラスごとの回答割合、年代ごとの内訳などを比べたい場合です。",
+            choices: [
+              { text: "はい、内訳をグループごとに比較したい", result: "stackedBar" },
+              { text: "いいえ、カテゴリごとの差を比較したい", result: "barChart" }
+            ]
+          },
+          timeSeries: {
+            label: "STEP 2",
+            text: "時系列データですか？",
+            hint: "時間の順番に並んだデータなら時系列データです。例：日ごとの気温、年ごとの人口など。",
+            choices: [
+              { text: "はい、時間による変化を見たい", next: "timePurpose" },
+              { text: "いいえ、時間の順番は主役ではない", next: "regionalCheck" }
+            ]
+          },
+          regionalCheck: {
+            label: "STEP 3",
+            text: "都道府県など、地域による値の違いを見たいですか？",
+            hint: "地域差を地図で見たい場合は、統計地図が候補になります。棒グラフで比較する方法もあります。",
+            choices: [
+              { text: "はい、都道府県など地域による違いを地図で見たい", result: "statisticalMap" },
+              { text: "いいえ、地域差ではなく変数の数で考えたい", next: "variableCount" }
+            ]
+          },
+          timePurpose: {
+            label: "STEP 3",
+            text: "どんな変化を見たいですか？",
+            hint: "1つ1つの値の動きか、全体量と内訳の動きかを分けます。",
+            choices: [
+              { text: "各値の動き方を見たい", result: "lineChart" },
+              { text: "全体量と内訳の動き方を見たい", result: "stackedBarTime" }
+            ]
+          },
+          variableCount: {
+            label: "STEP 4",
+            text: "比較したい変数はいくつですか？",
+            hint: "1変数なら分布や代表値、2変数なら関係を見ます。",
+            choices: [
+              { text: "1変数：気温だけ、点数だけ、時間だけなど", next: "oneVariablePurpose" },
+              { text: "2変数：気温と湿度、勉強時間と点数など", next: "scatterShape" }
+            ]
+          },
+          oneVariablePurpose: {
+            label: "STEP 5",
+            text: "グラフで見たいですか？数値で比較したいですか？",
+            hint: "まず全体像を見るならグラフ、要約して比べるなら代表値です。",
+            choices: [
+              { text: "グラフで分布やばらつきを見たい", next: "graphPurpose" },
+              { text: "数値で代表値を比較したい", next: "numberPurpose" }
+            ]
+          },
+          graphPurpose: {
+            label: "STEP 6",
+            text: "何を見たいですか？",
+            hint: "分布の形を見るか、複数グループのばらつきを比べるかで変わります。",
+            choices: [
+              { text: "分布の形や特定の階級を見たい", result: "histogram" },
+              { text: "複数のデータのばらつきを比較したい", result: "boxPlot" }
+            ]
+          },
+          numberPurpose: {
+            label: "STEP 6",
+            text: "分布は左右対称に近いですか？",
+            hint: "極端に大きい値・小さい値があると、平均値は引っ張られます。",
+            choices: [
+              { text: "はい、左右対称に近い", result: "mean" },
+              { text: "いいえ、偏りや外れ値がある", result: "medianMode" }
+            ]
+          },
+          scatterShape: {
+            label: "STEP 5",
+            text: "散布図で、直線的な関係がありそうですか？",
+            hint: "右上がり・右下がりのように、点がだいたい直線に沿って並ぶかを見ます。",
+            choices: [
+              { text: "はい、直線的な関係がありそうです", next: "outlier" },
+              { text: "いいえ、直線的には見えません", next: "curveCheck" }
+            ]
+          },
+          curveCheck: {
+            label: "STEP 6",
+            text: "曲線的な関係に見えますか？",
+            hint: "二次関数、反比例、ゆるやかなカーブのように見えるかを確認します。",
+            choices: [
+              { text: "はい、曲線的な関係に見えます", result: "curveConsult" },
+              { text: "いいえ、曲線的にも見えません", next: "constantCheck" }
+            ]
+          },
+          constantCheck: {
+            label: "STEP 7",
+            text: "一方の値によらず、もう一方の値がほぼ一定ですか？",
+            hint: "横一列・縦一列のように、片方が変化してももう片方があまり変わらない状態です。",
+            choices: [
+              { text: "はい、値がほぼ一定です", result: "constant" },
+              { text: "いいえ、特に関係は見られません", result: "noRelation" }
+            ]
+          },
+          outlier: {
+            label: "STEP 6",
+            text: "外れ値と考えられる値はありますか？",
+            hint: "外れ値に見えても、理由なく消してはいけません。理由を考えます。",
+            choices: [
+              { text: "ある。理由も予想できる", result: "correlationWithOutlier" },
+              { text: "ない。または理由が予想できない", result: "correlation" }
+            ]
+          }
+        },
+        results: {
+          textMining: {
+            title: "テキストマイニング",
+            body: ["文章を単語に分け、出現回数や共起関係を調べます。", "自由記述アンケートでは、まず単語の集計表を作ると分析しやすくなります。"],
+            report: {
+              summary: "自由記述の内容を整理するため、テキストマイニングによって語の出現頻度や特徴を確認する。",
+              route: ["分析したいデータが文章や自由記述である。", "数値の大小ではなく、どのような言葉が多く使われているかを見たい。", "そのため、語の出現回数や特徴を確認する。"],
+              spreadsheet: { status: "一部できる", level: "partial", method: ["自由記述が入っている列を確認する。", "特定の単語を含む回答数をCOUNTIF関数で数える。", "ただし、本格的なテキストマイニングには別ツールが必要になる。"], formulas: ["=COUNTIF(A2:A100,\"*楽しい*\")"] },
+              writing: ["どの自由記述を分析したのかを書く。", "出現回数の多い語や特徴的な語を書く。", "単語数だけでは文脈までは分からないことを書く。"],
+              example: "自由記述の内容を整理するため、COUNTIF関数を用いて特定の語の出現回数を確認した。その結果、〇〇という語が多く見られた。ただし、単語の出現回数だけでは文脈までは分からないため、実際の記述内容もあわせて確認する必要がある。"
+            }
+          },
+          pieOrBar: {
+            title: "円グラフ、または棒グラフ",
+            body: ["割合や内訳を見せたい場合は円グラフも使えます。", "ただし、数値の差を比較したい場合は棒グラフの方が読み取りやすいです。"],
+            report: { summary: "カテゴリごとの割合や個数を比較するため、円グラフまたは棒グラフを用いる。", route: ["データが質的データである。", "カテゴリの数が少なく、割合や内訳を見たい。", "割合なら円グラフ、差の比較なら棒グラフを使う。"], spreadsheet: { status: "できる", level: "ok", method: commonChartMethod("円グラフ、または棒グラフ", ["割合を見たいなら円グラフ、差を比較したいなら棒グラフにする。"]), formulas: [] }, writing: ["何のカテゴリを比べたのかを書く。", "最も多いカテゴリ、少ないカテゴリを書く。", "割合を見るのか、差を見るのかを書く。"], example: "カテゴリごとの割合や個数を比較するため、Googleスプレッドシートで円グラフまたは棒グラフを作成した。その結果、最も多かったのは〇〇で、カテゴリによって差があることが分かった。" }
+          },
+          barChart: {
+            title: "棒グラフ",
+            body: ["カテゴリごとの個数や割合の差を比較するのに向いています。", "カテゴリが多い場合は、円グラフより棒グラフの方が読み取りやすくなります。"],
+            report: { summary: "カテゴリごとの差を比較するため、棒グラフを用いる。", route: ["データがカテゴリごとに分かれている。", "カテゴリ間で個数、割合、平均値などを比較したい。", "差をはっきり見るため、棒グラフを選ぶ。"], spreadsheet: { status: "できる", level: "ok", method: commonChartMethod("棒グラフ", ["カテゴリが多い場合は、並べ替えて上位10個や下位10個だけにすると見やすい。"]), formulas: [] }, writing: ["何をカテゴリとして比較したのかを書く。", "最も高いもの、最も低いものを書く。", "差の理由まではこのデータだけでは言えないことを書く。"], example: "カテゴリごとの差を比較するため、Googleスプレッドシートで棒グラフを作成した。グラフを見ると、〇〇が最も高く、△△が最も低かった。ただし、この差が生まれた理由までは、このデータだけでは判断できない。" }
+          },
+          stackedBar: {
+            title: "積み上げ棒グラフ",
+            body: ["複数グループの内訳を比較したいときに向いています。", "割合を比べるなら100%積み上げ棒グラフも候補になります。"],
+            report: { summary: "複数グループの内訳を比較するため、積み上げ棒グラフを用いる。", route: ["複数のグループがある。", "各グループの内訳や構成比を比較したい。", "全体の量だけでなく、中身の違いを見たい。"], spreadsheet: { status: "できる", level: "ok", method: commonChartMethod("積み上げ棒グラフ", ["割合を比べたい場合は100%積み上げ棒グラフを選ぶ。"]), formulas: [] }, writing: ["どのグループ同士の内訳を比較したのかを書く。", "グループ間で違いが目立つ項目を書く。", "割合か実数かを明確にする。"], example: "複数グループの内訳を比較するため、Googleスプレッドシートで積み上げ棒グラフを作成した。その結果、〇〇のグループでは□□の割合が大きく、△△のグループでは◇◇の割合が大きかった。" }
+          },
+          lineChart: {
+            title: "折れ線グラフ",
+            body: ["時間の経過に伴う変化を表すのに向いています。", "植物の成長、気温の変化、売上の推移などに使いやすいです。"],
+            report: { summary: "時間による値の変化を確認するため、折れ線グラフを用いる。", route: ["データが年、月、日などの時間の順番を持っている。", "ある値が時間によってどう変化したかを見たい。", "時間の流れが重要なので、折れ線グラフを選ぶ。"], spreadsheet: { status: "できる", level: "ok", method: commonChartMethod("折れ線グラフ", ["横軸が時間の順番になっているか確認する。"]), formulas: [] }, writing: ["どの期間の変化を見たのかを書く。", "増加、減少、横ばいなど全体の傾向を書く。", "大きく変化した年や期間を書く。"], example: "時間による値の変化を確認するため、Googleスプレッドシートで折れ線グラフを作成した。グラフを見ると、〇〇は全体として増加／減少している傾向が見られた。特に、〇年から△年にかけて大きく変化していた。" }
+          },
+          stackedBarTime: {
+            title: "積み上げ棒グラフ",
+            body: ["全体量の変化と内訳の変化を同時に見たいときに向いています。", "例：年ごとの人口全体と年代別の内訳など。"],
+            report: { summary: "時間による全体量と内訳の変化を確認するため、積み上げ棒グラフを用いる。", route: ["データが時間の順番を持っている。", "全体量の変化だけでなく、その内訳も見たい。", "全体量と構成の変化を同時に見るため、積み上げ棒グラフを選ぶ。"], spreadsheet: { status: "できる", level: "ok", method: commonChartMethod("積み上げ棒グラフ", ["全体に対する割合の変化を見たい場合は100%積み上げ棒グラフを選ぶ。"]), formulas: [] }, writing: ["全体量が時間とともにどう変化したかを書く。", "内訳の中で増えたもの、減ったものを書く。", "全体量と内訳の両方に触れる。"], example: "時間による全体量と内訳の変化を確認するため、Googleスプレッドシートで積み上げ棒グラフを作成した。全体量は〇年から△年にかけて増加／減少しており、内訳では□□の割合が大きく変化していた。" }
+          },
+          statisticalMap: {
+            title: "統計地図",
+            body: ["都道府県など地域による値の違いを、地図の色分けで表す方法です。", "地域差を直感的に見たいときに向いています。棒グラフと併用すると、差の大きさも確認しやすくなります。"],
+            report: { summary: "都道府県による値の違いを確認するため、統計地図を用いる。", route: ["データが都道府県などの地域ごとに分かれている。", "地域によって値がどのように違うかを見たい。", "表や棒グラフだけでなく、地図上で違いを見たい。"], spreadsheet: { status: "できる：mandara.jsを使う", level: "ok", method: ["都道府県名と値が入った表を用意する。", "次のテンプレートを開く：<a href=\"https://docs.google.com/spreadsheets/d/1Sgmmv8ZydwJycx40D_C4OKF5wdrE951I6j80mW8DNss/copy\" target=\"_blank\" rel=\"noopener\">mandara.js用テンプレートをコピー</a>", "テンプレートをコピーした後の使い方は先生に聞く。", "地図で色が濃い地域、薄い地域、まとまりがある地域を確認する。"], formulas: [] }, writing: ["どの地域の値を地図にしたのかを書く。", "値が高い地域、低い地域、まとまりがある地域を書く。", "地図だけでは原因までは分からないことを書く。"], example: "都道府県による値の違いを確認するため、mandara.jsを用いて統計地図を作成した。地図を見ると、〇〇地方では値が高く、△△地方では値が低い傾向が見られた。ただし、この地域差が生まれた理由までは、このデータだけでは判断できない。" }
+          },
+          histogram: {
+            title: "ヒストグラム",
+            body: ["数値データの分布の形を見るのに向いています。", "どの範囲にデータが多いか、偏りがあるかを確認できます。"],
+            report: { summary: "数値データの分布の形を確認するため、ヒストグラムを用いる。", route: ["データが量的データである。", "1つの数値項目について、どの範囲にデータが多いかを見たい。", "平均値だけでなく、分布の形や偏りを確認したい。"], spreadsheet: { status: "できる", level: "ok", method: commonChartMethod("ヒストグラム", ["必要に応じて階級の幅を調整する。"]), formulas: [] }, writing: ["何の数値データの分布を見たのかを書く。", "どの範囲にデータが多いかを書く。", "左右対称に近いか、偏りがあるか、外れた値があるかを書く。"], example: "数値データの分布の形を確認するため、Googleスプレッドシートでヒストグラムを作成した。グラフを見ると、〇〇の値は□□から△△の範囲に多く集まっていた。また、分布には偏りが見られた／左右対称に近かった。" }
+          },
+          boxPlot: {
+            title: "箱ひげ図",
+            body: ["複数グループの中央値、ばらつき、外れ値を比較するのに向いています。", "平均だけでは見えない分布の違いを確認できます。"],
+            report: { summary: "複数グループのばらつきや中央値を比較するため、箱ひげ図を用いる。", route: ["データが量的データである。", "1つの数値について、複数グループの違いを見たい。", "平均値だけでなく、中央値、ばらつき、外れ値を比較したい。"], spreadsheet: { status: "標準機能だけではやりにくい：Statlookをおすすめ", level: "partial", method: ["Googleスプレッドシート本体だけでは、箱ひげ図を簡単に作る標準機能が弱い。", "授業では、Statlookを使って箱ひげ図を作る方法をおすすめする。", "箱ひげ図にしたいデータを用意し、Statlookでデータ範囲を指定する。", "箱ひげ図、または box plot を選び、中央値、四分位範囲、最大値、最小値、外れ値を確認する。", "具体的な操作画面は環境によって違うため、使い方は先生に確認する。"], formulas: ["=MIN(範囲)", "=QUARTILE(範囲,1)", "=MEDIAN(範囲)", "=QUARTILE(範囲,3)", "=MAX(範囲)"] }, writing: ["どのグループ同士を比較したのかを書く。", "中央値が高いグループ、ばらつきが大きいグループを書く。", "外れ値がある場合は、その扱いに注意して書く。"], example: "複数グループのばらつきや中央値を比較するため、Statlookを用いて箱ひげ図を作成した。箱ひげ図を見ると、中央値が最も高いのは〇〇であり、△△はばらつきが大きかった。また、外れ値と考えられる値も見られた。" }
+          },
+          mean: {
+            title: "平均値",
+            body: ["分布が左右対称に近い場合、平均値は代表値として使いやすいです。", "ただし、外れ値がある場合は中央値も一緒に確認しましょう。"],
+            report: { summary: "分布が左右対称に近いため、代表値として平均値を用いる。", route: ["データが量的データである。", "1つの数値項目について、代表的な値を知りたい。", "分布が大きく偏っておらず、極端な外れ値も少ない。"], spreadsheet: { status: "できる", level: "ok", method: ["平均値を表示したいセルを選ぶ。", "AVERAGE関数を入力する。", "範囲を指定してEnterを押す。"], formulas: ["=AVERAGE(範囲)", "=AVERAGE(B2:B48)"] }, writing: ["何の平均値を計算したのかを書く。", "平均値がデータ全体の中心的な傾向を表すことを書く。", "外れ値がある場合は中央値も確認する。"], example: "分布が左右対称に近いため、代表値として平均値を用いた。GoogleスプレッドシートのAVERAGE関数で計算した結果、〇〇の平均値は□□であった。" }
+          },
+          medianMode: {
+            title: "中央値・最頻値も確認",
+            body: ["分布が偏っている場合、平均値だけでは実態とずれることがあります。", "中央値や最頻値も確認し、平均値と比べて解釈します。"],
+            report: { summary: "分布に偏りや外れ値があるため、平均値だけでなく中央値や最頻値も確認する。", route: ["データが量的データである。", "代表値を確認したい。", "分布に偏りがある、または外れ値がある。", "平均値だけでは実態とずれる可能性がある。"], spreadsheet: { status: "できる", level: "ok", method: ["中央値はMEDIAN関数で求める。", "最頻値はMODE関数で求める。", "ただし、最頻値が2つ以上ある場合、MODE関数はそのうち1つだけを返す。", "表の上の方にある値が選ばれる場合があるので、度数もあわせて確認する。"], formulas: ["=MEDIAN(範囲)", "=MODE(範囲)", "=COUNTIF(範囲, 値)"] }, writing: ["平均値だけではなく中央値や最頻値を確認した理由を書く。", "平均値、中央値、最頻値を比べて、偏りや外れ値の影響を説明する。", "最頻値が複数ある可能性に注意する。"], example: "分布に偏りや外れ値があるため、平均値だけでなく中央値や最頻値も確認した。中央値はMEDIAN関数、最頻値はMODE関数を用いて求めた。ただし、最頻値が複数ある場合、MODE関数ではそのうち1つだけが表示されるため、度数もあわせて確認する必要がある。" }
+          },
+          correlationWithOutlier: {
+            title: "相関係数を計算し、外れ値の扱いを検討",
+            body: ["まず外れ値を含めた相関係数を確認します。", "外れ値に明確な理由がある場合は、除外するかどうかを説明したうえで、除外後の相関係数も確認します。", "その後、必要に応じて回帰分析に進みます。ただし、回帰分析だけで因果関係は証明できません。"],
+            report: { summary: "散布図で直線的な関係が見られたため相関係数を計算する。外れ値については理由を検討し、必要に応じて除外前後の結果を比較する。", route: ["データが量的データである。", "2つの数値項目の関係を見たい。", "散布図で直線的な関係が見られる。", "外れ値と考えられる点がある。"], spreadsheet: { status: "できる", level: "ok", method: ["2つの数値データの列を選択する。", "上部メニュー → 挿入 → グラフ を選ぶ。", "グラフの種類を散布図にする。", "相関係数はCORREL関数で求める。", "外れ値を含めた場合と、理由が説明できる場合の除外後を比較する。"], formulas: ["=CORREL(xの範囲, yの範囲)", "=CORREL(B2:B48, C2:C48)"] }, writing: ["散布図から見える関係を書く。", "相関係数を計算した理由を書く。", "外れ値は理由なく消してはいけないことを書く。"], example: "散布図で直線的な関係が見られたため、GoogleスプレッドシートのCORREL関数で相関係数を計算した。また、外れ値と考えられる点が見られたため、外れ値を含めた場合と除いた場合の結果を比較した。ただし、外れ値は理由なく除外してはいけない。" }
+          },
+          correlation: {
+            title: "相関係数、必要に応じて回帰分析",
+            body: ["散布図で直線的な関係が見られる場合、相関係数を計算します。", "関係を式で表したい場合は回帰分析に進みます。", "ただし、相関や回帰だけで因果関係は言えません。他の要因も考えます。"],
+            report: { summary: "散布図で直線的な関係が見られたため、相関係数を計算し、必要に応じて回帰分析を行う。", route: ["データが量的データである。", "2つの数値項目の関係を見たい。", "散布図を見ると、直線的な関係がありそうである。", "外れ値が大きな問題にならない、または理由がはっきりしない。"], spreadsheet: { status: "できる", level: "ok", method: ["2つの数値データの列を選択する。", "上部メニュー → 挿入 → グラフ を選び、散布図を作る。", "相関係数はCORREL関数で求める。", "回帰分析とは、散布図の点の集まりを、だいたい1本の直線で表す方法である。", "この直線は y = ax + b の形で表せる。aは傾き、bは切片である。", "傾きはSLOPE関数、切片はINTERCEPT関数で求める。", "グラフ上では、散布図のカスタマイズ → 系列 → トレンドライン で近似直線を表示できる。"], formulas: ["=CORREL(xの範囲, yの範囲)", "=SLOPE(yの範囲, xの範囲)", "=INTERCEPT(yの範囲, xの範囲)", "例：=SLOPE(C2:C48, B2:B48)", "例：=INTERCEPT(C2:C48, B2:B48)"] }, writing: ["散布図から見える傾向を書く。", "相関係数で関係の強さを書く。", "回帰分析を使う場合は、y = ax + b の形で関係を表す。", "相関や回帰分析だけでは因果関係までは分からないことを書く。"], example: "散布図で直線的な関係が見られたため、相関係数を計算した。必要に応じて回帰分析を行い、y = ax + b の形で関係を表した。Googleスプレッドシートでは、SLOPE関数で傾き、INTERCEPT関数で切片を求めることができる。ただし、相関や回帰分析だけでは因果関係までは分からない。" }
+          },
+          curveConsult: {
+            title: "曲線的な関係：教員に相談",
+            body: ["相関係数は直線的な関係を見る指標なので、曲線的な関係には合わないことがあります。", "変数変換や別のモデルを考える必要があるため、教員に相談しましょう。"],
+            report: { summary: "散布図で曲線的な関係が見られるため、単純な相関係数だけでなく、変数変換や別のモデルを検討する。", route: ["データが量的データである。", "2つの数値項目の関係を見たい。", "散布図を作ると、点が直線ではなく曲線のように並んでいる。", "単純な相関係数や1次関数の回帰直線ではうまく表せない可能性がある。"], spreadsheet: { status: "一部できるが、教員に相談", level: "partial", method: ["2つの数値データの列を選択する。", "上部メニュー → 挿入 → グラフ を選び、散布図を作る。", "曲線的な関係に見える場合は、無理に相関係数だけで説明しない。", "Googleスプレッドシートのトレンドラインでは線形以外を選べる場合もあるが、授業では先生に相談する。"], formulas: [] }, writing: ["散布図で曲線的な傾向が見られたことを書く。", "単純な相関係数だけでは説明しにくいことを書く。", "次にどんな分析が必要かを書く。"], example: "散布図を見ると、〇〇と△△の関係は直線的ではなく、曲線的な傾向があるように見えた。そのため、単純な相関係数や1次関数による回帰分析だけでは、関係を十分に表せない可能性がある。今後は、別のモデルや変数変換を検討する必要がある。" }
+          },
+          constant: {
+            title: "値がほぼ一定",
+            body: ["一方の値が変わっても、もう一方の値がほぼ変わらない状態です。", "これ自体が重要な結果になる場合もあります。データの選び方も見直してみましょう。"],
+            report: { summary: "散布図から、一方の値によらず他方の値がほぼ一定であることを確認する。", route: ["データが量的データである。", "2つの数値項目の関係を見たい。", "散布図を作ると、一方の値が変わっても、もう一方の値があまり変化していない。"], spreadsheet: { status: "できる", level: "ok", method: ["2つの数値データの列を選択する。", "上部メニュー → 挿入 → グラフ を選び、散布図を作る。", "必要に応じてCORREL関数で相関係数を求める。", "相関係数が0に近い場合は、直線的な関係が弱いと考える。"], formulas: ["=CORREL(xの範囲, yの範囲)"] }, writing: ["関係が見られなかったことを失敗として扱わない。", "一方の値に関係なく、もう一方の値がほぼ一定だったと書く。", "これ自体が分析結果になる。"], example: "散布図から、一方の値によらず他方の値がほぼ一定であることを確認した。〇〇の値が変化しても、△△は大きく変化していなかった。このことから、今回のデータでは〇〇と△△の間に明確な関係は見られなかった。" }
+          },
+          noRelation: {
+            title: "関係は見られない",
+            body: ["散布図で関係が見られない場合、無理に相関係数や回帰分析へ進まなくてもよいです。", "変数の選び方、データの範囲、サンプル数を見直してみましょう。"],
+            report: { summary: "散布図から明確な関係は見られなかったため、変数の選び方やデータの範囲を再検討する。", route: ["データが量的データである。", "2つの数値項目の関係を見たい。", "散布図を作ったが、直線的な関係も曲線的な関係も見られない。"], spreadsheet: { status: "できる", level: "ok", method: ["2つの数値データの列を選択する。", "上部メニュー → 挿入 → グラフ を選び、散布図を作る。", "点がばらばらに散らばっている場合は、明確な関係は見られないと判断する。", "必要に応じてCORREL関数で相関係数を確認する。"], formulas: ["=CORREL(xの範囲, yの範囲)"] }, writing: ["関係が見られなかったことを正直に書く。", "無理に原因や関係を作らない。", "次にどのようなデータを見ればよいかを書く。"], example: "散布図から明確な関係は見られなかった。今回のデータでは、〇〇が大きいほど△△も大きい、または小さいという傾向は確認できなかった。今後は、別の項目やデータの範囲を変えて再度分析したい。" }
+          }
+        }
+      },
+      test: {
+        title: "検定フロー",
+        start: "groupCount",
+        questions: {
+          groupCount: { label: "STEP 1", text: "比較したいグループ数はいくつですか？", hint: "このフローは主に2群比較を想定しています。", choices: [ { text: "2つのグループを比較したい", next: "scale" }, { text: "3つ以上のグループを比較したい", result: "threeGroups" } ] },
+          scale: { label: "STEP 2", text: "比べたいデータの種類はどれですか？", hint: "迷ったら、データの例に近いものを選びます。", choices: [ { text: "名義尺度：はい/いいえ、賛成/反対、A/B/Cなど", next: "nominalPair" }, { text: "順序尺度：5段階評価、順位など", next: "ordinalPair" }, { text: "間隔尺度・比例尺度：点数、身長、時間、金額など", next: "quantPair" } ] },
+          nominalPair: { label: "STEP 3", text: "同じ人・同じ対象を2回分類したデータですか？", hint: "例：同じ生徒に授業前後で『賛成/反対』を聞いた場合は対応ありです。別々のクラスや男女などを比べる場合は対応なしです。", choices: [ { text: "はい、対応があります", next: "nominalPairedTable" }, { text: "いいえ、対応はありません", next: "nominalIndependentTable" } ] },
+          nominalPairedTable: { label: "STEP 4", text: "2×2の対応ありクロス表ですか？", hint: "例：授業前の賛成/反対 × 授業後の賛成/反対 のように、2分類×2分類になっているかを見ます。", choices: [ { text: "はい、2×2です", result: "mcnemar" }, { text: "いいえ、2×2ではありません", result: "pairedNominalOther" } ] },
+          nominalIndependentTable: { label: "STEP 4", text: "対応なしのクロス集計表は2×2ですか？", hint: "例：クラスA/B × 成功/失敗 のように、2行×2列になっているかを見ます。", choices: [ { text: "はい、2×2です", next: "expectedSmall" }, { text: "いいえ、2×2ではありません", result: "chiSquareLarge" } ] },
+          expectedSmall: { label: "STEP 5", text: "期待度数が5未満のセルはありますか？", hint: "正確に計算できない場合は、人数がかなり少ないセルがあるかを目安にします。", choices: [ { text: "ある、または人数がかなり少ない", result: "fisher" }, { text: "ない、十分な人数がある", result: "chiSquare" } ] },
+          ordinalPair: { label: "STEP 3", text: "同じ人・同じ対象の前後比較ですか？", hint: "例：同じ生徒に授業前後でアンケートを取った場合は対応ありです。", choices: [ { text: "はい、対応があります", result: "wilcoxon" }, { text: "いいえ、別々のグループです", result: "mannWhitney" } ] },
+          quantPair: { label: "STEP 3", text: "同じ人・同じ対象の前後比較ですか？", hint: "例：同じ人の事前テスト・事後テストは対応ありです。", choices: [ { text: "はい、対応があります", next: "pairedNormal" }, { text: "いいえ、別々のグループです", next: "independentNormal" } ] },
+          pairedNormal: { label: "STEP 4", text: "差の分布は極端に偏っていませんか？", hint: "事後−事前の差を見たとき、極端な外れ値や強い偏りがなさそうかを確認します。", choices: [ { text: "はい、極端な偏りはなさそうです", result: "pairedT" }, { text: "いいえ、偏りや外れ値が気になります", result: "wilcoxon" } ] },
+          independentNormal: { label: "STEP 4", text: "各グループの分布は極端に偏っていませんか？", hint: "ヒストグラムや箱ひげ図で、強い偏り・極端な外れ値がないかを見ます。", choices: [ { text: "はい、極端な偏りはなさそうです", result: "welchT" }, { text: "いいえ、偏りや外れ値が気になります", result: "mannWhitney" } ] }
+        },
+        results: {}
+      }
+    };
+
+    Object.assign(flows.test.results, {
+      threeGroups: testResult("この簡易フローの範囲外です", ["3群以上では、2群比較とは別の検定を検討します。", "量的データなら、一元配置分散分析、Kruskal-Wallis検定、Friedman検定などが候補です。", "名義尺度なら、カイ二乗検定が使える場合があります。"], "3群以上の比較であるため、2群比較用の検定ではなく、データの種類と対応の有無に応じた検定を検討する。", ["比較したいグループが3つ以上ある。", "この検定フローは主に2群比較を想定している。", "2群比較用の検定だけでは対応できない。"], "標準関数だけでは扱いにくい", "hard", ["Googleスプレッドシートだけで授業中に扱うには難しいため、今回は教員に相談する。"], [], ["比較対象が3群以上であることを書く。", "簡易フローの範囲外であるため、追加検討が必要だと書く。"], "比較したいグループが3群以上であるため、2群比較用の検定ではなく、データの種類と対応の有無に応じた検定を検討する必要がある。今回の簡易フローの範囲を超えるため、教員に相談して分析方法を決定する。"),
+      mcnemar: testResult("マクネマー検定", ["同じ人・同じ対象を2回分類した、対応ありの2×2データで使います。", "ポイントは、前後で変化した人数に注目することです。"], "同じ対象を2回分類した対応ありの2×2データであるため、変化の有無を調べるためにマクネマー検定を用いる。", ["データは名義尺度である。", "同じ人や同じ対象を2回分類している。", "表が2×2である。"], "標準関数だけではやりにくい", "partial", ["まず2×2表を作る。", "前後で変化した人数に注目する。", "計算は式を自分で作る必要があるため、授業では教員に相談する。"], [], ["同じ対象を前後で比較していることを書く。", "何から何へ変化した人数に注目したのかを書く。"], "同じ対象を2回分類した対応ありの2×2データであるため、変化の有無を調べるためにマクネマー検定を検討した。Googleスプレッドシートでは標準機能だけで扱いにくいため、今回は2×2表を作成し、前後で変化した人数に注目した。"),
+      pairedNominalOther: testResult("対応ありの名義尺度：教員に相談", ["対応ありの名義尺度でも、2×2でない場合はマクネマー検定だけでは扱いにくいです。", "分類を2つにまとめてよいか、別の方法を使うかを教員に相談しましょう。"], "対応ありの名義尺度データだが2×2ではないため、分類の整理または拡張された検定方法を検討する。", ["データは名義尺度である。", "同じ人や同じ対象を2回分類している。", "表が2×2ではない。"], "標準関数だけでは難しい", "hard", ["まずクロス集計表を作る。", "分類を2つにまとめてよいか確認する。", "無理に進めず、教員に相談する。"], [], ["対応ありの名義尺度データであることを書く。", "2×2ではないため、分類の整理や別方法が必要だと書く。"], "対応ありの名義尺度データだが2×2ではないため、分類の整理または拡張された検定方法を検討する必要がある。Googleスプレッドシートだけで扱うには難しいため、教員に相談して分析方法を決める。"),
+      fisher: testResult("フィッシャーの正確検定", ["対応なしの名義尺度の2×2クロス集計表で、人数が少ない場合に使いやすい検定です。"], "対応なしの2×2クロス集計表で期待度数が小さいセルがあったため、フィッシャーの正確検定を用いる。", ["データは名義尺度である。", "対応なしの2×2クロス集計表である。", "期待度数が小さいセル、または人数がかなり少ないセルがある。"], "標準関数だけではやりにくい", "partial", ["まず2×2のクロス集計表を作る。", "人数が少ないセルがあるか確認する。", "標準関数だけでは直接扱いにくいため、教員に相談する。"], [], ["2×2のクロス集計表であることを書く。", "人数が少ないセルがあるため、この検定を検討したと書く。"], "対応なしの2×2クロス集計表で人数が少ないセルがあったため、フィッシャーの正確検定を検討した。Googleスプレッドシートの標準関数だけでは直接扱いにくいため、今回は2×2表を作成し、人数が少ないセルがあることを確認した。"),
+      chiSquare: testResult("カイ二乗検定", ["対応なしの名義尺度データで、2つの分類に関連があるかを調べる検定です。"], "対応なしの名義尺度クロス集計表について、分類同士の関連を調べるためにカイ二乗検定を用いる。", ["データは名義尺度である。", "対応なしのクロス集計表である。", "分類同士に関連があるかを調べたい。", "期待度数が小さいセルが少ない。"], "できる", "ok", ["観測度数の表を作る。", "期待度数の表を作る。", "期待度数は 行の合計 × 列の合計 ÷ 全体の合計 で求める。", "CHISQ.TEST関数でp値を求める。"], ["=CHISQ.TEST(観測度数の範囲, 期待度数の範囲)", "期待度数 = 行の合計 × 列の合計 ÷ 全体の合計"], ["どの分類同士の関連を調べたのかを書く。", "観測度数と期待度数を作り、CHISQ.TEST関数を使ったと書く。"], "対応なしの名義尺度クロス集計表について、分類同士の関連を調べるためにカイ二乗検定を用いた。Googleスプレッドシートでは、観測度数と期待度数の表を作成し、CHISQ.TEST関数でp値を求めることができる。"),
+      chiSquareLarge: testResult("カイ二乗検定", ["対応なしで2×2ではないクロス集計表でも、カイ二乗検定を使える場合があります。", "ただし、期待度数が小さいセルが多い場合は結果が不安定になります。"], "対応なしで2×2ではない名義尺度のクロス集計表について、分類同士の関連を調べるためにカイ二乗検定を検討する。", ["データは名義尺度である。", "対応なしのクロス集計表である。", "表は2×2ではない。", "分類同士の関連を調べたい。"], "できる", "ok", ["観測度数の表を作る。", "期待度数の表を作る。", "CHISQ.TEST関数でp値を求める。", "期待度数が小さいセルが多い場合は、分類をまとめるか教員に相談する。"], ["=CHISQ.TEST(観測度数の範囲, 期待度数の範囲)"], ["2×2ではないクロス集計表であることを書く。", "人数が少ない分類がある場合は、分類整理が必要だと書く。"], "対応なしで2×2ではない名義尺度のクロス集計表について、分類同士の関連を調べるためにカイ二乗検定を検討した。GoogleスプレッドシートではCHISQ.TEST関数を用いることができるが、期待度数が小さいセルが多い場合は分類の整理が必要である。"),
+      wilcoxon: testResult("ウィルコクソンの符号順位検定", ["対応のある2つのデータを比較するときに使います。", "順序尺度のデータや、量的データでも差の分布が極端に偏っている場合に候補になります。"], "対応のある2群比較で、順序尺度または正規性を仮定しにくいデータであるため、ウィルコクソンの符号順位検定を用いる。", ["同じ人や同じ対象の前後比較であり、対応がある。", "順序尺度、または差の分布に偏りや外れ値がある。"], "標準関数だけではやりにくい", "partial", ["まず対応のある2つのデータの差を出す。", "差が正か負か、差の大きさを確認する。", "本格的な検定は教員に相談する。"], ["=事後の値 - 事前の値"], ["同じ対象の前後比較であることを書く。", "正規性を仮定しにくいため、この検定を検討したと書く。"], "対応のある2群比較で、順序尺度または正規性を仮定しにくいデータであるため、ウィルコクソンの符号順位検定を検討した。Googleスプレッドシートの標準関数だけでは扱いにくいため、まずは前後差の符号や大きさを確認した。"),
+      mannWhitney: testResult("マン・ホイットニーのU検定", ["対応のない2つのグループを比較するときに使います。", "順序尺度のデータや、量的データでも強い偏りや外れ値がある場合に候補になります。"], "対応のない2群比較で、順序尺度または正規性を仮定しにくいデータであるため、マン・ホイットニーのU検定を用いる。", ["2つのグループは別々の対象であり、対応がない。", "順序尺度、または分布に偏りや外れ値がある。"], "標準関数だけではやりにくい", "partial", ["順位を使う検定である。", "順位を出すだけならRANK関数が使える。", "検定全体は標準関数だけでは扱いにくいため、教員に相談する。"], ["=RANK(値, 範囲)"], ["2つの独立したグループを比較していることを書く。", "順位に基づいて比較する方法を検討したと書く。"], "対応のない2群比較で、順序尺度または正規性を仮定しにくいデータであるため、マン・ホイットニーのU検定を検討した。Googleスプレッドシートでは順位を計算することはできるが、検定全体は標準関数だけでは扱いにくいため、教員に相談する。"),
+      pairedT: testResult("対応のあるt検定", ["同じ人・同じ対象を2回測った量的データを比較するときに使います。", "事前テストと事後テスト、使用前と使用後などの比較に向いています。"], "同じ対象から得られた対応のある量的データであり、差の分布に極端な偏りがないと考えられるため、対応のあるt検定を用いる。", ["データは量的データである。", "同じ人や同じ対象を2回測っている。", "差の分布に極端な偏りや外れ値がなさそうである。"], "できる", "ok", ["事前の範囲と事後の範囲を確認する。", "T.TEST関数を使う。", "第3引数は2にして両側検定にする。", "第4引数は1にして対応のあるt検定にする。"], ["=T.TEST(範囲1, 範囲2, 2, 1)"], ["同じ対象の前後比較であることを書く。", "差の分布に大きな偏りがなかったため対応のあるt検定を使ったと書く。"], "同じ対象から得られた対応のある量的データであり、差の分布に極端な偏りがないと考えられるため、対応のあるt検定を用いた。Googleスプレッドシートでは、T.TEST関数の第4引数を1にすることで、対応のあるt検定を行うことができる。"),
+      welchT: testResult("Welchのt検定", ["対応のない2つのグループの平均を比較するときに使います。", "2群の分散が等しいと仮定しなくてよいため、授業ではまずWelchのt検定を候補にすると安全です。"], "対応のない2群の量的データであり、各群の分布に極端な偏りがないと考えられるため、Welchのt検定を用いる。", ["データは量的データである。", "2つのグループは別々の対象であり、対応がない。", "各グループの分布に極端な偏りや外れ値がなさそうである。"], "できる", "ok", ["1つ目のグループの範囲と、2つ目のグループの範囲を確認する。", "T.TEST関数を使う。", "第3引数は2にして両側検定にする。", "第4引数は3にしてWelchのt検定にする。"], ["=T.TEST(範囲1, 範囲2, 2, 3)"], ["2つの独立したグループの平均を比較していることを書く。", "分散が等しいとは限らないためWelchのt検定を選んだと書く。"], "対応のない2群の量的データであり、各群の分布に極端な偏りがないと考えられるため、Welchのt検定を用いた。Googleスプレッドシートでは、T.TEST関数の第4引数を3にすることで、等分散を仮定しないWelchのt検定を行うことができる。")
+    });
+
+    function testResult(title, body, summary, route, status, level, method, formulas, writing, example) {
+      return { title, body, report: { summary, route, spreadsheet: { status, level, method, formulas }, writing, example } };
+    }
+
+    const home = document.getElementById("home");
+    const tool = document.getElementById("tool");
+    const roadmap = document.getElementById("roadmap");
+    const app = document.getElementById("app");
+    const toolTitle = document.getElementById("toolTitle");
+    const roadmapTitle = document.getElementById("roadmapTitle");
+    const roadmapHeading = document.getElementById("roadmapHeading");
+    const roadmapHint = document.getElementById("roadmapHint");
+    const roadmapContent = document.getElementById("roadmapContent");
+    const zoomSlider = document.getElementById("zoomSlider");
+    const zoomLabel = document.getElementById("zoomLabel");
+    const detailToggleButton = document.getElementById("detailToggleButton");
+
+    let currentTool = null;
+    let currentRoadmapTool = null;
+    let showRoadmapDetails = false;
+    let currentId = null;
+    let history = [];
+    let roadmapZoom = 1;
+    let pinchStartDistance = null;
+    let pinchStartZoom = 1;
+    let touchPanState = null;
+    let dragState = null;
+
+    function startTool(toolId) {
+      currentTool = toolId;
+      history = [];
+      home.classList.add("hidden");
+      roadmap.classList.add("hidden");
+      tool.classList.remove("hidden");
+      toolTitle.textContent = flows[toolId].title;
+      renderQuestion(flows[toolId].start);
+    }
+
+    function showHome() {
+      currentTool = null;
+      currentId = null;
+      history = [];
+      tool.classList.add("hidden");
+      roadmap.classList.add("hidden");
+      home.classList.remove("hidden");
+      app.innerHTML = "";
+    }
+
+    function renderQuestion(id) {
+      currentId = id;
+      const q = flows[currentTool].questions[id];
+      app.className = "question-card";
+      app.innerHTML = `
+        <span class="question-label">${escapeHtml(q.label)}</span>
+        <p class="question-text">${escapeHtml(q.text)}</p>
+        <p class="hint">${escapeHtml(q.hint || "")}</p>
+        <div class="choices">
+          ${q.choices.map((choice, index) => `<button class="choice" onclick="selectChoice(${index})">${escapeHtml(choice.text)}</button>`).join("")}
+        </div>
+        <div class="controls">
+          <button class="small-button" onclick="goBack()" ${history.length === 0 ? "disabled" : ""}>1つ戻る</button>
+          <button class="small-button" onclick="resetFlow()">最初から</button>
+        </div>
+        ${history.length ? `<div class="path">ここまでの選択：${history.map(h => escapeHtml(h.choiceText)).join(" → ")}</div>` : ""}
+      `;
+    }
+
+    function selectChoice(index) {
+      const q = flows[currentTool].questions[currentId];
+      const choice = q.choices[index];
+      history.push({ questionId: currentId, choiceText: choice.text });
+      if (choice.result) renderResult(choice.result);
+      else renderQuestion(choice.next);
+    }
+
+    function renderResult(id) {
+      const r = flows[currentTool].results[id];
+      const report = r.report;
+      app.className = "result-card";
+      app.innerHTML = `
+        <h2 class="result-title">${escapeHtml(r.title)}</h2>
+        <div>${r.body.map(text => `<p>${escapeHtml(text)}</p>`).join("")}</div>
+        <div class="report-block">
+          ${renderReportSection("レポートに書くなら", `<p>${escapeHtml(report.summary)}</p>`)}
+          ${renderReportSection("そこに至った手順", renderList(report.route, "ol"))}
+          ${renderSpreadsheet(report.spreadsheet)}
+          ${renderReportSection("ここからレポートを作るなら", renderList(report.writing, "ol"))}
+          ${renderReportSection("文例", `<p class="example-text">${escapeHtml(report.example)}</p>`)}
+        </div>
+        <div class="controls">
+          <button class="small-button" onclick="goBack()">1つ戻る</button>
+          <button class="small-button primary" onclick="resetFlow()">最初からやり直す</button>
+        </div>
+        <div class="path">ここまでの選択：${history.map(h => escapeHtml(h.choiceText)).join(" → ")}</div>
+      `;
+    }
+
+    function renderReportSection(title, innerHtml, extraClass = "") {
+      return `<section class="report-section ${extraClass}"><h3>${escapeHtml(title)}</h3>${innerHtml}</section>`;
+    }
+
+    function renderSpreadsheet(sheet) {
+      const cls = sheet.level === "ok" ? "spreadsheet-ok" : sheet.level === "hard" ? "spreadsheet-hard" : "spreadsheet-partial";
+      const formulas = sheet.formulas && sheet.formulas.length
+        ? `<div class="formula-list">${sheet.formulas.map(f => `<span class="formula">${escapeHtml(f)}</span>`).join("")}</div>`
+        : "";
+      return renderReportSection(
+        "Googleスプレッドシートでできるか・方法",
+        `<p><strong>${escapeHtml(sheet.status)}</strong></p>${renderListWithLinks(sheet.method, "ol")}${formulas}`,
+        cls
+      );
+    }
+
+    function renderList(items, tag = "ul") {
+      return `<${tag}>${items.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</${tag}>`;
+    }
+
+    function renderListWithLinks(items, tag = "ul") {
+      return `<${tag}>${items.map(item => `<li>${allowSafeLinks(item)}</li>`).join("")}</${tag}>`;
+    }
+
+    function allowSafeLinks(value) {
+      const escaped = escapeHtml(value);
+      return escaped.replace(/&lt;a href=&quot;(https:\/\/docs\.google\.com\/spreadsheets\/d\/1Sgmmv8ZydwJycx40D_C4OKF5wdrE951I6j80mW8DNss\/copy)&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;([^<]+)&lt;\/a&gt;/g, '<a href="$1" target="_blank" rel="noopener">$2</a>');
+    }
+
+    function goBack() {
+      if (history.length === 0) return;
+      const last = history.pop();
+      renderQuestion(last.questionId);
+    }
+
+    function resetFlow() {
+      history = [];
+      renderQuestion(flows[currentTool].start);
+    }
+
+    function showCurrentRoadmap() {
+      if (!currentTool) return;
+      showRoadmap(currentTool);
+    }
+
+    function showRoadmap(toolId) {
+      currentRoadmapTool = toolId;
+      currentTool = toolId;
+      home.classList.add("hidden");
+      tool.classList.add("hidden");
+      roadmap.classList.remove("hidden");
+      const flow = flows[toolId];
+      roadmapTitle.textContent = `${flow.title}：全体ロードマップ`;
+      roadmapHeading.textContent = `${flow.title}の全体像`;
+      roadmapHint.textContent = toolId === "test"
+        ? "2群比較を中心に、データの尺度・対応の有無・分布の偏りから検定を選びます。"
+        : "データの種類・時系列かどうか・地域差・変数の数から、グラフや分析方法を選びます。";
+      renderRoadmap();
+    }
+
+    function toggleRoadmapDetails() {
+      showRoadmapDetails = !showRoadmapDetails;
+      detailToggleButton.textContent = showRoadmapDetails ? "結果の説明を隠す" : "結果の説明を表示";
+      renderRoadmap();
+    }
+
+    function renderRoadmap() {
+      const flow = flows[currentRoadmapTool];
+      const tree = buildRoadmapTree(flow.start, flow, 0, new Set());
+      const layout = createTreeLayout(tree, flow);
+      roadmapContent.innerHTML = renderFlowchartSvg(layout);
+      requestAnimationFrame(() => { initFlowchartInteractions(); applyRoadmapZoom(); });
+    }
+
+    function clampZoom(value) { return Math.min(2.2, Math.max(0.5, Number(value) || 1)); }
+    function setRoadmapZoom(value) { roadmapZoom = clampZoom(value); applyRoadmapZoom(); }
+    function zoomRoadmap(delta) { setRoadmapZoom(roadmapZoom + delta); }
+    function resetRoadmapZoom() { setRoadmapZoom(1); }
+
+    function applyRoadmapZoom() {
+      const svg = roadmapContent.querySelector(".flowchart-svg");
+      if (!svg) return;
+      const baseWidth = Number(svg.dataset.baseWidth || svg.getAttribute("width"));
+      const baseHeight = Number(svg.dataset.baseHeight || svg.getAttribute("height"));
+      svg.style.width = `${baseWidth * roadmapZoom}px`;
+      svg.style.height = `${baseHeight * roadmapZoom}px`;
+      if (zoomSlider) zoomSlider.value = Math.round(roadmapZoom * 100);
+      if (zoomLabel) zoomLabel.textContent = `${Math.round(roadmapZoom * 100)}%`;
+    }
+
+    function getTouchDistance(touches) {
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      return Math.hypot(dx, dy);
+    }
+
+    function initFlowchartInteractions() {
+      const wrap = roadmapContent.querySelector(".flowchart-wrap");
+      if (!wrap || wrap.dataset.zoomReady === "true") return;
+      wrap.dataset.zoomReady = "true";
+
+      wrap.addEventListener("wheel", (event) => {
+        if (!(event.ctrlKey || event.metaKey)) return;
+        event.preventDefault();
+        const delta = event.deltaY > 0 ? -0.08 : 0.08;
+        const beforeZoom = roadmapZoom;
+        setRoadmapZoom(roadmapZoom + delta);
+        const ratio = roadmapZoom / beforeZoom;
+        wrap.scrollLeft = (wrap.scrollLeft + event.offsetX) * ratio - event.offsetX;
+        wrap.scrollTop = (wrap.scrollTop + event.offsetY) * ratio - event.offsetY;
+      }, { passive: false });
+
+      wrap.addEventListener("touchstart", (event) => {
+        if (event.touches.length === 2) {
+          pinchStartDistance = getTouchDistance(event.touches);
+          pinchStartZoom = roadmapZoom;
+          touchPanState = null;
+        } else if (event.touches.length === 1) {
+          const touch = event.touches[0];
+          touchPanState = { x: touch.clientX, y: touch.clientY, left: wrap.scrollLeft, top: wrap.scrollTop };
+        }
+      }, { passive: true });
+
+      wrap.addEventListener("touchmove", (event) => {
+        if (event.touches.length === 2 && pinchStartDistance) {
+          event.preventDefault();
+          const distance = getTouchDistance(event.touches);
+          setRoadmapZoom(pinchStartZoom * (distance / pinchStartDistance));
+        } else if (event.touches.length === 1 && touchPanState) {
+          event.preventDefault();
+          const touch = event.touches[0];
+          wrap.scrollLeft = touchPanState.left - (touch.clientX - touchPanState.x);
+          wrap.scrollTop = touchPanState.top - (touch.clientY - touchPanState.y);
+        }
+      }, { passive: false });
+
+      wrap.addEventListener("touchend", (event) => {
+        if (event.touches.length < 2) pinchStartDistance = null;
+        if (event.touches.length === 0) touchPanState = null;
+      });
+
+      wrap.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "touch" || event.button !== 0) return;
+        dragState = { x: event.clientX, y: event.clientY, left: wrap.scrollLeft, top: wrap.scrollTop };
+        wrap.classList.add("dragging");
+        wrap.setPointerCapture(event.pointerId);
+      });
+
+      wrap.addEventListener("pointermove", (event) => {
+        if (!dragState) return;
+        event.preventDefault();
+        wrap.scrollLeft = dragState.left - (event.clientX - dragState.x);
+        wrap.scrollTop = dragState.top - (event.clientY - dragState.y);
+      });
+
+      function endDrag(event) {
+        dragState = null;
+        wrap.classList.remove("dragging");
+        if (event && wrap.hasPointerCapture(event.pointerId)) wrap.releasePointerCapture(event.pointerId);
+      }
+      wrap.addEventListener("pointerup", endDrag);
+      wrap.addEventListener("pointercancel", endDrag);
+      wrap.addEventListener("pointerleave", endDrag);
+    }
+
+    function buildRoadmapTree(id, flow, depth, seen) {
+      const isResult = id.startsWith("result:");
+      if (isResult) {
+        const resultId = id.replace("result:", "");
+        return { type: "result", id: resultId, depth, children: [] };
+      }
+      const q = flow.questions[id];
+      if (!q) return { type: "missing", id, depth, children: [] };
+      const nextSeen = new Set(seen);
+      nextSeen.add(id);
+      const children = q.choices.map(choice => {
+        const target = choice.result ? `result:${choice.result}` : choice.next;
+        if (!choice.result && nextSeen.has(target)) return { label: choice.text, node: { type: "question", id: target, depth: depth + 1, repeated: true, children: [] } };
+        return { label: choice.text, node: buildRoadmapTree(target, flow, depth + 1, nextSeen) };
+      });
+      return { type: "question", id, depth, children };
+    }
+
+    function createTreeLayout(root, flow) {
+      const baseNodeW = 320;
+      const baseNodeH = showRoadmapDetails ? 142 : 108;
+      const dx = 780;
+      const dy = showRoadmapDetails ? 198 : 174;
+      const margin = 48;
+      const nodes = [];
+      const edges = [];
+      let leafIndex = 0;
+      let maxDepth = 0;
+
+      function measure(node) {
+        maxDepth = Math.max(maxDepth, node.depth);
+        if (!node.children || node.children.length === 0) {
+          node._leafMin = leafIndex;
+          node._leafMax = leafIndex;
+          leafIndex += 1;
+          return;
+        }
+        node.children.forEach(child => measure(child.node));
+        node._leafMin = Math.min(...node.children.map(child => child.node._leafMin));
+        node._leafMax = Math.max(...node.children.map(child => child.node._leafMax));
+      }
+
+      function place(node, parentNode, edgeLabel) {
+        const x = margin + node.depth * dx;
+        const y = margin + ((node._leafMin + node._leafMax) / 2) * dy;
+        const nodeData = { key: `${node.type}-${node.id}-${nodes.length}`, type: node.type, id: node.id, x, y, w: baseNodeW, h: baseNodeH, repeated: node.repeated };
+        nodes.push(nodeData);
+        if (parentNode) edges.push({ from: parentNode, to: nodeData, label: edgeLabel });
+        if (node.children) node.children.forEach(child => place(child.node, nodeData, child.label));
+      }
+
+      measure(root);
+      place(root, null, "");
+      const width = margin * 2 + (maxDepth + 1) * dx + baseNodeW;
+      const height = margin * 2 + Math.max(1, leafIndex) * dy + baseNodeH;
+      return { flow, nodes, edges, width, height, nodeW: baseNodeW, nodeH: baseNodeH };
+    }
+
+    function renderFlowchartSvg(layout) {
+      const { flow, nodes, edges, width, height } = layout;
+      const edgeSvg = edges.map(edge => renderEdge(edge)).join("");
+      const nodeSvg = nodes.map(node => renderNode(node, flow)).join("");
+      return `
+        <div class="legend">
+          <span><i style="background:#eff6ff;border-color:#bfdbfe"></i>質問</span>
+          <span><i style="background:#ecfdf5;border-color:#a7f3d0"></i>到達点</span>
+          <span><i style="background:#fff7ed;border-color:#fed7aa"></i>範囲外・要相談</span>
+        </div>
+        <div class="flowchart-wrap" aria-label="全体フローチャート">
+          <svg class="flowchart-svg" width="${width}" height="${height}" data-base-width="${width}" data-base-height="${height}" viewBox="0 0 ${width} ${height}" role="img">
+            <defs><marker id="arrowHead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"></path></marker></defs>
+            ${edgeSvg}${nodeSvg}
+          </svg>
+        </div>`;
+    }
+
+    function renderEdge(edge) {
+      const x1 = edge.from.x + edge.from.w;
+      const y1 = edge.from.y + edge.from.h / 2;
+      const x2 = edge.to.x;
+      const y2 = edge.to.y + edge.to.h / 2;
+      const gap = Math.max(1, x2 - x1);
+      const midX = x1 + Math.max(150, gap * 0.44);
+      const labelW = 230;
+      const labelH = 54;
+      const labelX = Math.min(midX + 18, x2 - labelW - 22);
+      const labelY = y2 - labelH / 2;
+      const labelText = shortenChoiceLabel(edge.label);
+      return `
+        <path d="M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrowHead)"></path>
+        <foreignObject x="${labelX}" y="${labelY}" width="${labelW}" height="${labelH}"><div xmlns="http://www.w3.org/1999/xhtml" class="edge-label-box">${escapeHtml(labelText)}</div></foreignObject>`;
+    }
+
+    function renderNode(node, flow) {
+      let title = "";
+      let badge = "";
+      let detail = "";
+      let className = "flow-node";
+      if (node.type === "question") {
+        const q = flow.questions[node.id];
+        badge = node.repeated ? "再掲" : (q?.label || "質問");
+        title = q?.text || node.id;
+        className += " question";
+        detail = showRoadmapDetails && q?.hint ? q.hint : "";
+      } else if (node.type === "result") {
+        const r = flow.results[node.id];
+        badge = "到達点";
+        title = r?.title || node.id;
+        className += " result";
+        if (node.id === "threeGroups" || title.includes("範囲外") || title.includes("相談")) className += " outside";
+        detail = showRoadmapDetails && r?.body ? r.body.join(" ") : "";
+      } else {
+        badge = "未設定";
+        title = node.id;
+      }
+      return `<foreignObject x="${node.x}" y="${node.y}" width="${node.w}" height="${node.h}"><div xmlns="http://www.w3.org/1999/xhtml" class="${className}"><div class="badge">${escapeHtml(badge)}</div><div class="title">${escapeHtml(title)}</div>${detail ? `<div class="detail">${escapeHtml(truncateText(detail, showRoadmapDetails ? 78 : 0))}</div>` : ""}</div></foreignObject>`;
+    }
+
+    function shortenChoiceLabel(text) {
+      const value = String(text || "");
+      if (value.startsWith("はい")) return `Yes：${truncateText(value.replace(/^はい[、。]?/, "").trim(), 18)}`;
+      if (value.startsWith("いいえ")) return `No：${truncateText(value.replace(/^いいえ[、。]?/, "").trim(), 18)}`;
+      if (value.includes("2つのグループ")) return "2群";
+      if (value.includes("3つ以上")) return "3群以上";
+      if (value.includes("質的")) return "質的";
+      if (value.includes("量的")) return "量的";
+      if (value.includes("名義尺度")) return "名義";
+      if (value.includes("順序尺度")) return "順序";
+      if (value.includes("間隔尺度")) return "量的";
+      if (value.includes("地域")) return "地域差";
+      if (value.includes("1変数")) return "1変数";
+      if (value.includes("2変数")) return "2変数";
+      if (value.includes("グラフ")) return "グラフ";
+      if (value.includes("数値")) return "数値";
+      return truncateText(value, 18);
+    }
+
+    function truncateText(text, maxLength) {
+      const value = String(text || "");
+      if (!maxLength || value.length <= maxLength) return value;
+      return value.slice(0, maxLength - 1) + "…";
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
